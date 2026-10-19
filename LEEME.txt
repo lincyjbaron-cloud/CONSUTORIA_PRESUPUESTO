@@ -1,0 +1,26 @@
+EXEPAZ EMPRESARIAL - Recaudo 2026 y proyección 2027 (Lincy Janeth Barón Pedraza, USTA 2026-II)
+
+ABRIR EL RESULTADO
+  Exepaz_Empresarial_Avance70.html  -> doble clic, o en VS Code: clic derecho > "Open with Live Server".
+  (Necesita internet para cargar la librería de gráficas Chart.js.)
+
+CONTENIDO
+  datos/                      Los 3 archivos de la empresa (CONFIDENCIALES, no compartir)
+  s1_base.py                  Paso 1: base larga registro-mes y controles de integridad
+  s3_analisis.py              Paso 2: caracterización y cumplimiento 2026
+  s4_modelos.py               Paso 3: diagnóstico, validación de modelos, cierre 2026 y proyección 2027 (~1 min)
+  construir_html.py           Paso 4: arma el HTML desde plantilla.html
+  plantilla.html              Diseño del HTML (aquí se edita el aspecto)
+  requirements.txt            Librerías de Python
+  long.pkl, S.pkl, bud.pkl, res_a.json, res_b.json, paths_tot_sfv.npy
+                              Archivos intermedios que se regeneran solos
+
+REGENERAR (terminal de VS Code, dentro de esta carpeta)
+  pip install -r requirements.txt
+  python s1_base.py
+  python s3_analisis.py
+  python s4_modelos.py
+  python construir_html.py
+
+ACTUALIZAR CON OCT-DIC 2026
+  Reemplazar los archivos de datos/ por versiones nuevas con el MISMO nombre y volver a correr los 4 pasos.

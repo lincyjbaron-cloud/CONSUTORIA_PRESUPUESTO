@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exepaz Empresarial · Recaudo 2026–2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#F6F7F9; --surface:#FFFFFF; --ink:#0F172A; --ink2:#475569; --muted:#94A3B8; --line:#E2E8F0;
+  --primary:#3D008D; --accent:#ED1E79; --navy:#001A4D;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#6250d6;
+  --good:#0ca30c; --warn:#fab219; --crit:#d03b3b;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.55}
+.mono,code{font-family:'Fira Code',monospace}
+header.top{background:linear-gradient(180deg,#001A4D,#002868);color:#fff;padding:22px 16px 0}
+.wrap{max-width:1240px;margin:0 auto;padding:0 16px}
+header.top .wrap{padding:0}
+.kicker{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#FDB913;font-weight:700}
+h1{font-size:1.55rem;margin:.25rem 0 .2rem;font-weight:800}
+.sub{color:#cbd5e1;font-size:.86rem;margin:0 0 14px}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:thin}
+nav.tabs button{background:transparent;border:0;color:#cbd5e1;font:600 .82rem 'Montserrat',system-ui,sans-serif;padding:11px 14px;border-radius:10px 10px 0 0;cursor:pointer;white-space:nowrap}
+nav.tabs button:hover{color:#fff;background:rgba(255,255,255,.07)}
+nav.tabs button[aria-selected="true"]{background:var(--bg);color:var(--primary)}
+main{padding:26px 0 40px}
+section.tab{display:none} section.tab.on{display:block}
+h2{font-size:1.3rem;margin:0 0 4px;color:var(--ink)}
+h3{font-size:1rem;margin:0 0 10px;color:var(--primary)}
+.lead{color:var(--ink2);max-width:860px;margin:0 0 20px}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+.kpi .lab{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink2);font-weight:700}
+.kpi .val{font-size:2rem;font-weight:800;margin:4px 0 2px;font-variant-numeric:tabular-nums}
+.kpi .det{font-size:.8rem;color:var(--ink2)}
+.chart{position:relative;height:320px}
+.chart.sm{height:250px}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:#F5F0FA;color:var(--navy);font-weight:700;font-size:.75rem;position:sticky;top:0}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;font-family:'Fira Code',monospace;font-size:.78rem}
+tr.best td{background:#ECFDF5}
+.scroll{overflow-x:auto;max-height:440px;overflow-y:auto;border:1px solid var(--line);border-radius:10px}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:999px;font-size:.72rem;font-weight:700}
+.p-good{background:#DCFCE7;color:#166534}.p-warn{background:#FEF3C7;color:#92400E}.p-crit{background:#FEE2E2;color:#991B1B}
+.callout{border-left:4px solid var(--primary);background:#F3F0FC;border-radius:10px;padding:12px 14px;font-size:.86rem;margin:14px 0}
+.callout.warn{border-color:#FDB913;background:#FFFBEB}
+.callout.ok{border-color:var(--good);background:#ECFDF5}
+.callout b{color:var(--navy)}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 14px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:#fff}
+.seg button{border:0;background:#fff;color:var(--ink2);padding:7px 13px;font:600 .78rem 'Montserrat',system-ui,sans-serif;cursor:pointer}
+.seg button[aria-pressed="true"]{background:linear-gradient(140deg,#3D008D,#ED1E79);color:#fff}
+label.ctl{font-size:.8rem;color:var(--ink2);font-weight:600;display:flex;align-items:center;gap:8px}
+select,input[type=range]{font:inherit}
+select{padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.bar{height:10px;background:#EEF2F7;border-radius:6px;overflow:hidden;position:relative}
+.bar i{display:block;height:100%;border-radius:6px}
+.obj{display:grid;grid-template-columns:minmax(0,1fr) 150px 54px;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.obj:last-child{border-bottom:0}
+.obj .t{font-weight:600;font-size:.86rem}
+.obj .e{font-size:.76rem;color:var(--ink2)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.76rem;color:var(--ink2);margin-top:8px}
+.legend span::before{content:"";display:inline-block;width:12px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle;background:var(--c)}
+.legend span.box::before{height:10px;opacity:.35}
+ul.chk{list-style:none;padding:0;margin:0;font-size:.84rem}
+ul.chk li{padding:6px 0;border-bottom:1px dashed var(--line);display:flex;gap:8px}
+ul.chk li::before{content:"✓";color:var(--good);font-weight:800}
+ul.chk li.no::before{content:"○";color:var(--muted)}
+.rule{background:#0F172A;color:#E2E8F0;border-radius:12px;padding:16px;font-size:.84rem}
+.rule b{color:#FDB913}
+footer{background:#001A4D;color:#cbd5e1;font-size:.78rem;padding:20px 0}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
+.note{font-size:.74rem;color:var(--ink2);margin-top:8px}
+@media (max-width:640px){.obj{grid-template-columns:1fr 54px}.obj .bar{grid-column:1/-1;order:3}.kpi .val{font-size:1.6rem}h1{font-size:1.25rem}}
+@media print{nav.tabs,.controls{display:none}section.tab{display:block;break-before:page}.card{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="kicker">Universidad Santo Tomás · Consultoría Estadística 2026-II</div>
+    <h1>Recaudo y cumplimiento presupuestal de Exepaz Empresarial</h1>
+    <p class="sub">Seguimiento 2026 y proyección 2027 · Jardines de Paz S.A. · Lincy Janeth Barón Pedraza · Datos: enero 2016 – septiembre 2026 (corte 30-sep-2026)</p>
+    <nav class="tabs" role="tablist" id="tabs"></nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ RESUMEN ============ -->
+<section class="tab on" id="t-resumen" role="tabpanel">
+  <h2>Resumen ejecutivo</h2>
+  <p class="lead">Este aplicativo recalcula todo desde los dos libros de recaudo y el archivo de seguimiento de metas. Cada pestaña corresponde a un objetivo específico del anteproyecto y muestra la evidencia con la que se declara su avance.</p>
+  <div class="grid g4" id="kpis"></div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card">
+      <h3>Avance frente a los objetivos específicos</h3>
+      <div id="avance"></div>
+      <p class="note">Mismo peso para los cinco objetivos. Avance anterior (18-oct-2026): 48 %. Si se duda entre dos niveles, se reporta el de abajo.</p>
+    </div>
+    <div class="card">
+      <h3>Lo que hay que saber</h3>
+      <div id="claves"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ OBJ 1 ============ -->
+<section class="tab" id="t-o1" role="tabpanel">
+  <h2>Objetivo 1 · Base analítica reproducible</h2>
+  <p class="lead">Base larga registro-mes construida desde las columnas D–O de cada hoja, conservando libro, hoja y fila de origen. Sin fusionar ni eliminar filas (regla R5).</p>
+  <div class="grid g2">
+    <div class="card"><h3>Controles de integridad</h3><ul class="chk" id="controles"></ul></div>
+    <div class="card"><h3>Conciliación anual por libro (millones de pesos corrientes)</h3><div class="scroll"><table id="tab-anual"></table></div>
+      <p class="note">Recalculado desde las filas de datos; excluye la fila «TOTAL GENERAL» y la columna P.</p></div>
+  </div>
+</section>
+
+<!-- ============ OBJ 2 ============ -->
+<section class="tab" id="t-o2" role="tabpanel">
+  <h2>Objetivo 2 · Caracterizar 2026 y fijar la regla de atípicos</h2>
+  <p class="lead">Tendencia, estacionalidad y pagos extraordinarios frente a la historia. El grupo Fondavivienda reúne los contratos con «DAVIVIENDA» en el nombre, en ambos libros.</p>
+  <div class="card">
+    <div class="controls">
+      <div class="seg" id="seg-serie"></div>
+      <label class="ctl"><input type="checkbox" id="chk-sfv" checked> Mostrar serie sin Fondavivienda</label>
+    </div>
+    <div class="chart"><canvas id="c-serie"></canvas></div>
+    <div class="legend" id="lg-serie"></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h3>Peso promedio de cada mes en el año (2016–2025)</h3><div class="chart sm"><canvas id="c-peso"></canvas></div>
+      <div class="legend"><span style="--c:var(--s1)">Total con todos los contratos</span><span style="--c:var(--s2)">Total sin Fondavivienda</span></div>
+      <p class="note" id="nota-peso"></p></div>
+    <div class="card"><h3>Pago intermitente del grupo Fondavivienda</h3><div class="scroll"><table id="tab-fv"></table></div></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h3>Crecimiento enero–septiembre 2026 frente a 2025</h3><div class="scroll"><table id="tab-crec"></table></div>
+      <h3 style="margin-top:16px">Fuerza de componentes (STL, serie en logaritmo)</h3><div class="scroll"><table id="tab-stl"></table></div></div>
+    <div class="card"><h3>Atípicos detectados (residuo STL fuera de 3 × RIC)</h3><div class="scroll" style="max-height:300px"><table id="tab-atip"></table></div>
+      <p class="note">Enero y febrero de 2026 son un desplazamiento de mes de FONCEL y SOMEC; septiembre de 2026 puede estar incompleto por el corte del 30-sep.</p></div>
+  </div>
+  <div class="rule" style="margin-top:16px">
+    <b>Regla R7 · pagos extraordinarios (fijada antes de evaluar)</b><br>
+    1) La serie principal es el total de Exepaz Empresarial con todos los contratos; nunca se eliminan pagos de la serie.<br>
+    2) Para pronosticar se modela la serie <b>sin el grupo Fondavivienda</b> (sensibilidad), porque su pago no sigue la estacionalidad: ocurrió en 6 de 11 años, casi siempre en julio.<br>
+    3) El pago se reincorpora como <b>escenario</b>: «sin pago», «con pago» (monto del orden de los observados) y «esperado» (monto × frecuencia histórica, 6/11).<br>
+    4) Un residuo STL fuera de 3 × RIC se marca como atípico y se interpreta con el detalle por contrato antes de cualquier decisión.<br>
+    5) Declaración: la regla surgió de explorar todos los datos, incluidos 2025–2026.
+  </div>
+</section>
+
+<!-- ============ OBJ 3 ============ -->
+<section class="tab" id="t-o3" role="tabpanel">
+  <h2>Objetivo 3 · Cumplimiento del presupuesto 2026 a septiembre</h2>
+  <p class="lead">Razón recaudo / presupuesto, mensual y acumulada. Recaudo: libros de Exepaz Empresarial. Presupuesto: archivo de seguimiento de metas por ejecutivo (hoja 2026, totales empresarial e individual).</p>
+  <div class="controls"><div class="seg" id="seg-cump"></div></div>
+  <div class="grid g4" id="kpi-cump"></div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h3>Recaudo frente a presupuesto por mes (M$)</h3><div class="chart sm"><canvas id="c-cmes"></canvas></div>
+      <div class="legend"><span class="box" style="--c:var(--s1)">Recaudo real</span><span class="box" style="--c:var(--muted)">Presupuesto</span></div></div>
+    <div class="card"><h3>Cumplimiento acumulado (%)</h3><div class="chart sm"><canvas id="c-cacum"></canvas></div>
+      <div class="legend"><span style="--c:var(--s1)">Con todos los contratos</span><span style="--c:var(--s2)">Sin Fondavivienda</span><span style="--c:var(--muted)">Meta 100 %</span></div></div>
+  </div>
+  <div class="card" style="margin-top:16px"><h3>Desviación por mes y contratos que la explican</h3><div class="scroll"><table id="tab-desv"></table></div></div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h3>Contratos que más restan (ene–sep 2026 vs 2025, M$)</h3><div class="scroll"><table id="tab-neg"></table></div></div>
+    <div class="card"><h3>Contratos que más suman (ene–sep 2026 vs 2025, M$)</h3><div class="scroll"><table id="tab-pos"></table></div></div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3>Cumplimiento por ejecutivo y canal (reporte Jake Mate, seudonimizado)</h3>
+    <div class="grid g4" id="kpi-rep" style="margin-bottom:12px"></div>
+    <div class="scroll"><table id="tab-ej"></table></div>
+    <p class="note">«Sin pago» resta $998,6 M al ejecutivo que tiene el contrato 2338. El recaudo por ejecutivo depende de la composición de su cartera: no es una medida de productividad individual.</p>
+  </div>
+</section>
+
+<!-- ============ OBJ 4 ============ -->
+<section class="tab" id="t-o4" role="tabpanel">
+  <h2>Objetivo 4 · Validar, seleccionar métodos y estimar el cierre 2026</h2>
+  <p class="lead">Diagnóstico de la serie y comparación con origen móvil. Desarrollo: 49 orígenes (dic-2019 a dic-2023), horizonte 1–12, con datos hasta dic-2024. Prueba final: orígenes dic-2024 a ago-2026, usada una sola vez.</p>
+  <div class="card"><h3>Diagnóstico (serie en logaritmo)</h3><div class="scroll"><table id="tab-diag"></table></div>
+    <p class="note">ADF: H₀ raíz unitaria. KPSS: H₀ estacionariedad. Ljung-Box sobre residuos del SARIMA ajustado hasta dic-2024. λ de Box-Cox cercano a 0 o negativo respalda el logaritmo.</p></div>
+  <div class="card" style="margin-top:16px">
+    <div class="controls"><div class="seg" id="seg-eval"></div><div class="seg" id="seg-per"></div></div>
+    <div class="scroll"><table id="tab-eval"></table></div>
+    <p class="note">MAE y RMSE en millones. MASE &lt; 1: mejor que el estacional ingenuo. Cobertura: % de valores reales dentro del intervalo (ideal ≈ 80 % y 95 %). APE 12: error absoluto del total de 12 meses, el que importa para el presupuesto anual. El método actual no produce intervalos.</p>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h3>MASE por horizonte (desarrollo)</h3><div class="chart sm"><canvas id="c-h"></canvas></div><div class="legend" id="lg-h"></div></div>
+    <div class="card"><h3>Selección del método</h3><div id="seleccion"></div></div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3>Cierre esperado 2026</h3>
+    <div class="controls"><div class="seg" id="seg-cierre"></div></div>
+    <div class="grid g4" id="kpi-cierre"></div>
+    <div class="chart sm" style="margin-top:14px"><canvas id="c-od"></canvas></div>
+    <div class="legend"><span style="--c:var(--s1)">Real 2026</span><span style="--c:var(--s2)">Pronóstico (mediana)</span><span class="box" style="--c:var(--s2)">Intervalo 80 % / 95 %</span><span style="--c:var(--muted)">Presupuesto</span></div>
+    <p class="note">Cierre = real ene–sep (con el pago de junio) + pronóstico oct–dic de la serie sin Fondavivienda (R7). Intervalos por 5.000 trayectorias simuladas del SARIMA.</p>
+  </div>
+</section>
+
+<!-- ============ OBJ 5 ============ -->
+<section class="tab" id="t-o5" role="tabpanel">
+  <h2>Objetivo 5 · Proyección mensual 2027 con escenarios</h2>
+  <p class="lead">SARIMA (0,1,1)(0,1,1)₁₂ en logaritmo sobre la serie sin Fondavivienda, ajustado con todo el histórico. El pago extraordinario se suma según el escenario elegido.</p>
+  <div class="card">
+    <div class="controls">
+      <div class="seg" id="seg-esc"></div>
+      <label class="ctl">Monto del pago <input type="range" id="r-monto" min="0" max="1500" step="10"> <span class="mono" id="v-monto"></span></label>
+      <label class="ctl">Mes <select id="s-mes"></select></label>
+    </div>
+    <div class="grid g4" id="kpi-27"></div>
+    <div class="chart" style="margin-top:14px"><canvas id="c-27"></canvas></div>
+    <div class="legend"><span style="--c:var(--s1)">Histórico 2024–2026</span><span style="--c:var(--s2)">Proyección (mediana)</span><span class="box" style="--c:var(--s2)">Intervalo 80 % / 95 %</span></div>
+    <p class="note">Ojo con enero y febrero: el modelo hereda el desplazamiento de FONCEL y SOMEC de enero a febrero de 2026. Para presupuestar conviene leer enero + febrero juntos (<span id="ef27"></span> M$) hasta que la empresa confirme en qué mes pagarán en 2027.</p>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h3>Tabla mensual 2027 (M$)</h3><div class="scroll"><table id="tab-27"></table></div></div>
+    <div class="card"><h3>Componentes y contraste</h3><div id="comp27"></div></div>
+  </div>
+</section>
+
+<!-- ============ PENDIENTES ============ -->
+<section class="tab" id="t-pend" role="tabpanel">
+  <h2>Pendientes, limitaciones y método</h2>
+  <div class="grid g2">
+    <div class="card"><h3>Lo que falta para el 100 %</h3><ul class="chk" id="pend"></ul></div>
+    <div class="card"><h3>Limitaciones</h3><ul class="chk">
+      <li class="no">Solo se observan contratos con recaudo positivo; no hay mora, vigencias ni retiros.</li>
+      <li class="no">Cifras nominales; el crecimiento real exige deflactar con el IPC mensual (DANE).</li>
+      <li class="no">El periodo de prueba (2025–2026) ya se había explorado: no es completamente independiente.</li>
+      <li class="no">El grupo Fondavivienda se identificó por el nombre del contrato.</li>
+      <li class="no">El reporte y los libros fechan el recaudo de forma distinta (ene/feb 2026).</li>
+      <li class="no">Las proyecciones son insumos, no compromisos presupuestales (comunicación del 8-sep-2026).</li>
+    </ul></div>
+  </div>
+  <div class="card" style="margin-top:16px"><h3>Reproducibilidad</h3>
+    <p style="font-size:.86rem;margin:0">Todas las cifras de esta página salen de los scripts de Python que la acompañan (<code>s1_base.py</code>, <code>s3_analisis.py</code>, <code>s4_modelos.py</code>, <code>construir_html.py</code>), que leen los tres archivos de la empresa sin modificarlos. Para actualizar con los datos de octubre–diciembre basta reemplazar los libros y volver a ejecutarlos en ese orden. Nombres de asesores y ejecutivos seudonimizados (Ley 1581 de 2012).</p></div>
+</section>
+
+</main>
+<footer><div class="wrap"><span>Exepaz Empresarial · Jardines de Paz S.A. · Uso académico</span><span>Generado el <span id="fecha"></span> · Cifras en millones de pesos corrientes (M$)</span></div></footer>
+
+<script>
+const D = __DATA__;
+</script>
+<script>
+/* ---------- utilidades ---------- */
+const MES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const C={s1:css('--s1'),s2:css('--s2'),s3:css('--s3'),s4:css('--s4'),muted:css('--muted'),ink2:css('--ink2'),line:css('--line'),good:css('--good'),crit:css('--crit')};
+const f0=x=>x==null?'—':Number(x).toLocaleString('es-CO',{maximumFractionDigits:0});
+const f1=x=>x==null||isNaN(x)?'—':Number(x).toLocaleString('es-CO',{minimumFractionDigits:1,maximumFractionDigits:1});
+const f2=x=>x==null||isNaN(x)?'—':Number(x).toLocaleString('es-CO',{minimumFractionDigits:2,maximumFractionDigits:2});
+const f3=x=>x==null||isNaN(x)?'—':Number(x).toLocaleString('es-CO',{minimumFractionDigits:3,maximumFractionDigits:3});
+const pct=x=>x==null||isNaN(x)?'—':f1(x)+' %';
+const $=id=>document.getElementById(id);
+const alpha=(hex,a)=>{const n=parseInt(hex.slice(1),16);return `rgba(${n>>16},${(n>>8)&255},${n&255},${a})`};
+function status(c){ // cumplimiento -> pill
+  if(c>=100) return `<span class="pill p-good">▲ ${pct(c)}</span>`;
+  if(c>=90) return `<span class="pill p-warn">● ${pct(c)}</span>`;
+  return `<span class="pill p-crit">▼ ${pct(c)}</span>`;
+}
+function table(el,head,rows,numCols=[]){
+  const nc=i=>numCols.includes(i)?' class="n"':'';
+  $(el).innerHTML='<thead><tr>'+head.map((h,i)=>`<th${nc(i)}>${h}</th>`).join('')+'</tr></thead><tbody>'+
+    rows.map(r=>{const cls=r._cls?` class="${r._cls}"`:'';const cells=r._cells||r;return `<tr${cls}>`+cells.map((c,i)=>`<td${nc(i)}>${c}</td>`).join('')+'</tr>'}).join('')+'</tbody>';
+}
+function seg(el,opts,cur,cb){
+  const box=$(el); box.innerHTML='';
+  opts.forEach(([v,l])=>{const b=document.createElement('button');b.type='button';b.textContent=l;b.setAttribute('aria-pressed',v===cur);
+    b.onclick=()=>{[...box.children].forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');cb(v)};box.appendChild(b)});
+}
+Chart.defaults.font.family="'Montserrat',sans-serif";Chart.defaults.font.size=11;Chart.defaults.color=C.ink2;
+Chart.defaults.plugins.legend.display=false;Chart.defaults.maintainAspectRatio=false;
+Chart.defaults.interaction={mode:'index',intersect:false};
+Chart.defaults.plugins.tooltip.callbacks.label=ctx=>`${ctx.dataset.label}: ${f1(ctx.parsed.y)}`;
+const grid={color:C.line,drawTicks:false},noGrid={display:false};
+const charts={};
+function mk(id,cfg){if(charts[id])charts[id].destroy();charts[id]=new Chart($(id),cfg);return charts[id]}
+
+/* ---------- pestañas ---------- */
+const TABS=[['resumen','Resumen'],['o1','1 · Base'],['o2','2 · Caracterización'],['o3','3 · Cumplimiento 2026'],['o4','4 · Validación y cierre'],['o5','5 · Proyección 2027'],['pend','Pendientes']];
+TABS.forEach(([k,l],i)=>{const b=document.createElement('button');b.role='tab';b.textContent=l;b.setAttribute('aria-selected',i===0);
+  b.onclick=()=>{document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected','false'));b.setAttribute('aria-selected','true');
+    document.querySelectorAll('section.tab').forEach(s=>s.classList.remove('on'));$('t-'+k).classList.add('on');
+    try{localStorage.setItem('exepaz-tab',k)}catch(e){} render(k)};$('tabs').appendChild(b)});
+
+/* ---------- RESUMEN ---------- */
+const CT=D.cump.TOT, CI=D.cierre.TOT, F=D.fc.TOT_sFV;
+function rResumen(){
+  const k=[
+    ['Cumplimiento a septiembre',pct(CT.cump_acum[8]),`Libros: ${f0(CT.real_js)} M$ de ${f0(CT.presu_js)} M$. Sin Fondavivienda: ${pct(CT.cump_acum_sFV[8])}`],
+    ['Cumplimiento esperado al cierre',pct(CI.cump[2]),`Intervalo 80 %: ${pct(CI.cump[1])} – ${pct(CI.cump[3])}. Probabilidad de cumplir: ${pct(CI.p_cumple)}`],
+    ['Recaudo base 2027',f0(F.anio2027.mediana)+' M$',`Sin pago extraordinario. Intervalo 80 %: ${f0(F.anio2027.p10)} – ${f0(F.anio2027.p90)} M$`],
+    ['Avance de los objetivos',D.avance_total+' %','Antes: 48 % (18-oct-2026). Meta de esta entrega: ≥ 70 %']];
+  $('kpis').innerHTML=k.map(([a,b,c])=>`<div class="card kpi"><div class="lab">${a}</div><div class="val">${b}</div><div class="det">${c}</div></div>`).join('');
+  $('avance').innerHTML=D.objetivos.map(o=>`<div class="obj"><div><div class="t">${o.n}. ${o.t}</div><div class="e">${o.e}</div></div>
+    <div class="bar" title="Antes ${o.antes} %"><i style="width:${o.ahora}%;background:linear-gradient(90deg,#3D008D,#ED1E79)"></i></div>
+    <div class="mono" style="font-weight:700;text-align:right">${o.ahora} %</div></div>`).join('');
+  const sinFV=D.reporte.cump_sFV;
+  $('claves').innerHTML=`
+   <div class="callout warn"><b>El sobrecumplimiento depende de un pago.</b> Sin los $998,6 M de Fondavivienda (junio), el cumplimiento del reporte pasa de ${pct(D.reporte.cump)} a ${pct(sinFV)} y el de los libros de ${pct(CT.cump_acum[8])} a ${pct(CT.cump_acum_sFV[8])}.</div>
+   <div class="callout"><b>Cierre 2026:</b> con el pago ya recibido, la línea cerraría en torno a ${f0(CI.total[2])} M$ frente a un presupuesto de ${f0(CI.presu_anual)} M$. Sin el pago, la probabilidad de cumplir sería solo ${pct(CI.p_cumple_sFV)}.</div>
+   <div class="callout"><b>Modelo:</b> el SARIMA en logaritmo es el mejor o empata en el desarrollo y es el único con intervalos calibrados; el método actual de la empresa es competitivo en el total sin Fondavivienda, pero no da rango.</div>
+   <div class="callout ok"><b>2027:</b> base de ${f0(F.anio2027.mediana)} M$ (+${f1((F.anio2027.mediana/D.base2026_sFV-1)*100)} % sobre el cierre 2026 sin pago). Si el pago se repite, se suman del orden de $1.000 M; ponderado por su frecuencia histórica, unos $${f0(998.6*6/11)} M.</div>`;
+}
+
+/* ---------- OBJ 1 ---------- */
+function rO1(){
+  $('controles').innerHTML=D.controles.map(c=>`<li>${c}</li>`).join('');
+  const A=D.car;
+  const rows=[];for(let y=2016;y<=2026;y++){const e=A.EMP.anual[y],i=A.IND.anual[y];rows.push([y+(y===2026?' (ene–sep)':''),f1(e),f1(i),f1(e+i),D.filas[y].EMP,D.filas[y].IND])}
+  const sE=Object.entries(A.EMP.anual).filter(([y])=>y<2026).reduce((s,[,v])=>s+v,0),sI=Object.entries(A.IND.anual).filter(([y])=>y<2026).reduce((s,[,v])=>s+v,0);
+  rows.push({_cls:'best',_cells:['<b>2016–2025</b>','<b>'+f1(sE)+'</b>','<b>'+f1(sI)+'</b>','<b>'+f1(sE+sI)+'</b>','','']});
+  table('tab-anual',['Año','Empresarial','Individual','Total','Filas EMP','Filas IND'],rows,[1,2,3,4,5]);
+}
+
+/* ---------- OBJ 2 ---------- */
+let serSel='TOT';
+function rO2(){
+  seg('seg-serie',[['TOT','Total línea'],['EMP','Empresarial'],['IND','Individual']],serSel,v=>{serSel=v;drawSerie()});
+  $('chk-sfv').onchange=drawSerie; drawSerie();
+  mk('c-peso',{type:'bar',data:{labels:MES,datasets:[{label:'Con todos',data:D.car.peso_mes.TOT,backgroundColor:C.s1,borderRadius:4,borderSkipped:'start'},{label:'Sin Fondavivienda',data:D.car.peso_mes.TOT_sFV,backgroundColor:C.s2,borderRadius:4,borderSkipped:'start'}]},
+    options:{scales:{y:{grid,ticks:{callback:v=>v+' %'}},x:{grid:noGrid}},plugins:{tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${f1(c.parsed.y)} %`}}}}});
+  $('nota-peso').textContent=`Julio pesa ${f1(D.car.peso_mes.TOT[6])} % del año con todos los contratos y ${f1(D.car.peso_mes.TOT_sFV[6])} % sin Fondavivienda: el pico de julio del total lo fabrica ese pago. En el libro individual el pico es propio (${f1(D.car.peso_mes.IND[6])} %).`;
+  table('tab-fv',['Año','Recaudo EMP','Grupo FV (año)','Mes del pago','Pago del mes','% del total del mes'],
+    D.car.fv.map(r=>[r.anio+(r.anio===2026?' *':''),f1(r.emp),f1(r.fv),r.fv>50?MES[r.mes_max-1]:'—',r.fv>50?f1(r.fv_max):'—',r.fv>50?pct(r.pct_mes):'—']),[1,2,4,5]);
+  const L={EMP:'Empresarial',IND:'Individual',TOT:'Total línea',EMP_sFV:'Empresarial sin FV',IND_sFV:'Individual sin FV',TOT_sFV:'Total sin FV'};
+  table('tab-crec',['Serie','Ene–sep 2025','Ene–sep 2026','Crecimiento','CAGR 2016–2025'],Object.keys(L).map(k=>[L[k],f1(D.car[k].js25),f1(D.car[k].js26),pct(D.car[k].crec_js),pct(D.car[k].cagr)]),[1,2,3,4]);
+  table('tab-stl',['Serie','Fuerza estacional','Fuerza de tendencia'],[['TOT','Total'],['EMP','Empresarial'],['IND','Individual'],['TOT_sFV','Total sin FV']].map(([k,l])=>[l,f3(D.stl[k].f_estac),f3(D.stl[k].f_tend)]),[1,2]);
+  const at=[];['TOT','TOT_sFV','IND'].forEach(k=>D.stl[k].atipicos.forEach(a=>at.push([{TOT:'Total',TOT_sFV:'Total sin FV',IND:'Individual'}[k],a.mes,f1(a.valor),(a.z>0?'▲ ':'▼ ')+f2(a.z)])));
+  table('tab-atip',['Serie','Mes','Valor (M$)','Desvío (RIC)'],at,[2,3]);
+}
+function drawSerie(){
+  const k=serSel,ds=[{label:{TOT:'Total',EMP:'Empresarial',IND:'Individual'}[k],data:D.series[k],borderColor:C.s1,borderWidth:2,pointRadius:0,tension:0}];
+  const lg=[`<span style="--c:${C.s1}">${ds[0].label} con todos los contratos</span>`];
+  if($('chk-sfv').checked){ds.push({label:'Sin Fondavivienda',data:D.series[k+'_sFV'],borderColor:C.s2,borderWidth:2,pointRadius:0,borderDash:[5,3]});lg.push(`<span style="--c:${C.s2}">Sin Fondavivienda</span>`)}
+  $('lg-serie').innerHTML=lg.join('');
+  mk('c-serie',{type:'line',data:{labels:D.meses,datasets:ds},options:{scales:{y:{grid,title:{display:true,text:'M$'}},x:{grid:noGrid,ticks:{maxTicksLimit:12,callback:function(v){const l=this.getLabelForValue(v);return l.endsWith('-01')?l.slice(0,4):''},autoSkip:false}}}}});
+}
+
+/* ---------- OBJ 3 ---------- */
+let cSel='TOT';
+function rO3(){
+  seg('seg-cump',[['TOT','Total línea'],['EMP','Libro empresarial'],['IND','Libro individual']],cSel,v=>{cSel=v;drawCump()});drawCump();
+  const R=D.reporte;
+  $('kpi-rep').innerHTML=[['Cumplimiento del reporte',status(R.cump),`${f0(R.real)} de ${f0(R.meta)} M$`],['Sin el pago de Fondavivienda',status(R.cump_sFV),`${f0(R.real-998.6)} M$`],
+    ['Error del método actual (WAPE)',pct(R.wape),`Sin el pago: ${pct(R.wape_sFV)}`],['Ejecutivos sobre la meta',`${R.n_sobre} de ${R.n}`,`Mediana ${pct(R.mediana_cump)} · ${R.n_bajo70} bajo 70 %`]]
+    .map(([a,b,c])=>`<div class="kpi"><div class="lab">${a}</div><div class="val" style="font-size:1.35rem">${b}</div><div class="det">${c}</div></div>`).join('');
+  table('tab-ej',['ID','Tipo','Meta ene–sep','Real ene–sep','Cumplimiento','Real sin pago','Cumpl. sin pago','Meta anual'],
+    R.ejecutivos.map(e=>[e.id+(e.fv?' ★':''),e.canal,f1(e.meta),f1(e.real),status(e.cump),f1(e.real_sFV),status(e.cump_sFV),f1(e.meta_anual)]),[2,3,5,7]);
+  const cr=r=>[r.c,r.n,f1(r.v25),f1(r.v26),(r.d>0?'+':'')+f1(r.d)];
+  const ce=D.car.contratos;
+  table('tab-neg',['Contrato','Nombre','2025','2026','Δ'],[...ce.EMP.neg.slice(0,6).map(cr),...ce.IND.neg.slice(0,2).map(r=>cr({...r,n:r.n+' (IND)'}))],[2,3,4]);
+  table('tab-pos',['Contrato','Nombre','2025','2026','Δ'],[...ce.EMP.pos.slice(0,6).map(cr),...ce.IND.pos.slice(0,2).map(r=>cr({...r,n:r.n+' (IND)'}))],[2,3,4]);
+}
+function drawCump(){
+  const c=D.cump[cSel];
+  $('kpi-cump').innerHTML=[['Presupuesto ene–sep',f0(c.presu_js)+' M$','Presupuesto anual: '+f0(c.presu_anual)+' M$'],['Recaudo ene–sep',f0(c.real_js)+' M$','Sin Fondavivienda: '+f0(c.real_js_sFV)+' M$'],
+    ['Cumplimiento acumulado',pct(c.cump_acum[8]),'Diferencia: '+f0(c.real_js-c.presu_js)+' M$'],['Sin Fondavivienda',pct(c.cump_acum_sFV[8]),'Diferencia: '+f0(c.real_js_sFV-c.presu_js)+' M$']]
+    .map(([a,b,d])=>`<div class="card kpi"><div class="lab">${a}</div><div class="val">${b}</div><div class="det">${d}</div></div>`).join('');
+  mk('c-cmes',{type:'bar',data:{labels:MES.slice(0,9),datasets:[{label:'Real',data:c.real,backgroundColor:C.s1,borderRadius:4,borderSkipped:'start'},{label:'Presupuesto',data:c.presu.slice(0,9),backgroundColor:alpha('#94A3B8',.55),borderRadius:4,borderSkipped:'start'}]},
+    options:{scales:{y:{grid},x:{grid:noGrid}},plugins:{tooltip:{callbacks:{afterBody:it=>'Cumplimiento: '+pct(c.cump_mes[it[0].dataIndex])}}}}});
+  mk('c-cacum',{type:'line',data:{labels:MES.slice(0,9),datasets:[{label:'Con todos',data:c.cump_acum,borderColor:C.s1,borderWidth:2,pointRadius:4,pointBackgroundColor:C.s1},
+    {label:'Sin Fondavivienda',data:c.cump_acum_sFV,borderColor:C.s2,borderWidth:2,pointRadius:4,pointBackgroundColor:C.s2},{label:'Meta',data:Array(9).fill(100),borderColor:C.muted,borderDash:[4,4],borderWidth:1.5,pointRadius:0}]},
+    options:{scales:{y:{grid,ticks:{callback:v=>v+' %'}},x:{grid:noGrid}},plugins:{tooltip:{callbacks:{label:x=>`${x.dataset.label}: ${f1(x.parsed.y)} %`}}}}});
+  table('tab-desv',['Mes','Presupuesto','Real','Desviación','Cumpl. mes','Contratos con mayor recaudo del mes (total línea)'],
+    c.real.map((r,i)=>[MES[i],f1(c.presu[i]),f1(r),(r-c.presu[i]>0?'+':'')+f1(r-c.presu[i]),status(c.cump_mes[i]),
+      D.car.top_mes[i].top.map(t=>`${t.c} ${t.n.slice(0,34)} · ${f1(t.v)} (${f1(t.pct)} %)`).join('<br>')]),[1,2,3]);
+}
+
+/* ---------- OBJ 4 ---------- */
+let eSer='TOT_sFV',ePer='dev',ciSel='TOT';
+const SL={TOT:'Total',TOT_sFV:'Total sin FV',EMP:'Empresarial',IND:'Individual'};
+const MCOL={'Estacional ingenuo':C.muted,'Método actual (replicado)':C.s4,'ETS(A,Ad,A) log':C.s3,'SARIMA (0,1,1)(0,1,1)12 log':C.s2};
+function rO4(){
+  table('tab-diag',['Serie','ADF p (nivel)','KPSS p (nivel)','ADF p (Δ₁₂)','KPSS p (Δ₁₂)','ADF p (ΔΔ₁₂)','λ Box-Cox','θ (MA 1)','Θ (SMA 12)','Ljung-Box p (12)','Ljung-Box p (24)'],
+    Object.keys(SL).map(k=>{const d=D.diag[k];return [SL[k],f3(d.nivel_log.adf_p),f3(d.nivel_log.kpss_p)+(d.nivel_log.kpss_p<=0.01?'≤':''),f3(d.dif_estacional.adf_p),f3(d.dif_estacional.kpss_p)+(d.dif_estacional.kpss_p>=0.1?'≥':''),f3(d.dif_reg_estac.adf_p),f3(d.boxcox_lambda),f3(d.theta),f3(d.Theta),f3(d.ljung12_p),f3(d.ljung24_p)]}),[1,2,3,4,5,6,7,8,9,10]);
+  seg('seg-eval',Object.entries(SL),eSer,v=>{eSer=v;drawEval()});seg('seg-per',[['dev','Desarrollo'],['test','Prueba final']],ePer,v=>{ePer=v;drawEval()});drawEval();
+  $('seleccion').innerHTML=`<div class="callout ok"><b>Seleccionado: SARIMA (0,1,1)(0,1,1)₁₂ en logaritmo, sobre la serie sin Fondavivienda + escenarios R7.</b></div>
+   <ul class="chk"><li>El nivel no es estacionario (ADF p ≈ 0,9; KPSS p ≤ 0,01); con la diferencia estacional y regular sí: justifica d = 1, D = 1.</li>
+   <li>λ de Box-Cox negativo y varianza que crece con el nivel: el logaritmo es pertinente.</li>
+   <li>Desarrollo: menor MASE en el total, el empresarial y el individual; en el total sin FV empata con el método actual (${f3(ev('dev','TOT_sFV','SARIMA (0,1,1)(0,1,1)12 log').MASE)} vs ${f3(ev('dev','TOT_sFV','Método actual (replicado)').MASE)}).</li>
+   <li>Es el único con intervalos calibrados en desarrollo (cobertura ${pct(100*ev('dev','TOT_sFV','SARIMA (0,1,1)(0,1,1)12 log').C80)} y ${pct(100*ev('dev','TOT_sFV','SARIMA (0,1,1)(0,1,1)12 log').C95)}); ETS queda corto.</li>
+   <li>Residuos sin autocorrelación (Ljung-Box p &gt; 0,3).</li>
+   <li>Prueba final: el error mensual de todos sube (MASE ≈ 3) por los pagos desplazados de 2025–2026, pero el SARIMA sin FV tiene el menor error del total anual (${pct(ev('test','TOT_sFV','SARIMA (0,1,1)(0,1,1)12 log').APE12)}) y sesgo casi nulo.</li></ul>
+   <div class="callout warn"><b>Lectura honesta:</b> la mejora frente a las referencias es modesta. Para presupuestar, que un modelo simple sea difícil de superar es un resultado; el aporte del SARIMA es el <b>rango</b>, no solo la cifra.</div>`;
+  const hs=Object.keys(MCOL).map(m=>({label:m,data:D.mase_h['TOT_sFV|'+m],borderColor:MCOL[m],borderWidth:2,pointRadius:3,pointBackgroundColor:MCOL[m]}));
+  mk('c-h',{type:'line',data:{labels:[...Array(12)].map((_,i)=>'h'+(i+1)),datasets:hs},options:{scales:{y:{grid,title:{display:true,text:'MASE · total sin FV'}},x:{grid:noGrid}},plugins:{tooltip:{callbacks:{label:x=>`${x.dataset.label}: ${f3(x.parsed.y)}`}}}}});
+  $('lg-h').innerHTML=Object.entries(MCOL).map(([m,c])=>`<span style="--c:${c}">${m}</span>`).join('');
+  seg('seg-cierre',[['TOT','Total línea'],['EMP','Empresarial'],['IND','Individual']],ciSel,v=>{ciSel=v;drawCierre()});drawCierre();
+}
+function ev(p,s,m){return (p==='dev'?D.eval_dev:D.eval_test).find(r=>r.serie===s&&r.modelo===m)}
+function drawEval(){
+  const rows=(ePer==='dev'?D.eval_dev:D.eval_test).filter(r=>r.serie===eSer);
+  const best=Math.min(...rows.map(r=>r.MASE));
+  table('tab-eval',['Modelo','MAE','RMSE','MASE','Cobertura 80 %','Cobertura 95 %','APE 12 meses','Sesgo 12 meses','Pronósticos'],
+    rows.map(r=>({_cls:r.MASE===best?'best':'',_cells:[r.modelo,f1(r.MAE),f1(r.RMSE),f3(r.MASE),r.C80==null?'—':pct(100*r.C80),r.C95==null?'—':pct(100*r.C95),pct(r.APE12),pct(r.sesgo12),r.n]})),[1,2,3,4,5,6,7,8]);
+}
+function drawCierre(){
+  const c=D.cierre[ciSel],key={TOT:'TOT_sFV',EMP:'EMP_sFV',IND:'IND_sFV'}[ciSel],f=D.fc[key],cu=D.cump[ciSel];
+  $('kpi-cierre').innerHTML=[['Real ene–sep',f0(c.real_js)+' M$','Incluye el pago de junio'],['Pronóstico oct–dic',f0(c.od[2])+' M$',`80 %: ${f0(c.od[1])}–${f0(c.od[3])} · presupuesto ${f0(c.presu_od)}`],
+    ['Cumplimiento esperado',pct(c.cump[2]),`80 %: ${pct(c.cump[1])}–${pct(c.cump[3])} · 95 %: ${pct(c.cump[0])}–${pct(c.cump[4])}`],['Probabilidad de cumplir',pct(c.p_cumple),'Sin el pago: '+pct(c.p_cumple_sFV)+` (cumpl. ${pct(c.cump_sFV[2])})`]]
+    .map(([a,b,d])=>`<div class="kpi"><div class="lab">${a}</div><div class="val" style="font-size:1.5rem">${b}</div><div class="det">${d}</div></div>`).join('');
+  const real=[...D.series[ciSel].slice(-9),null,null,null];
+  const nul=Array(8).fill(null),sl=(a)=>[...nul,real[8],...a.slice(0,3)];
+  mk('c-od',{type:'line',data:{labels:MES,datasets:[
+    {label:'95 % sup',data:sl(f.p97_5),borderWidth:0,pointRadius:0,fill:'+1',backgroundColor:alpha(C.s2,.12)},{label:'95 % inf',data:sl(f.p2_5),borderWidth:0,pointRadius:0,fill:false},
+    {label:'80 % sup',data:sl(f.p90),borderWidth:0,pointRadius:0,fill:'+1',backgroundColor:alpha(C.s2,.22)},{label:'80 % inf',data:sl(f.p10),borderWidth:0,pointRadius:0,fill:false},
+    {label:'Real',data:real,borderColor:C.s1,borderWidth:2,pointRadius:3,pointBackgroundColor:C.s1},{label:'Pronóstico',data:sl(f.mediana),borderColor:C.s2,borderWidth:2,borderDash:[5,3],pointRadius:3,pointBackgroundColor:C.s2},
+    {label:'Presupuesto',data:cu.presu,borderColor:C.muted,borderWidth:1.5,borderDash:[3,3],pointRadius:0}]},
+    options:{scales:{y:{grid,title:{display:true,text:'M$'}},x:{grid:noGrid}},plugins:{tooltip:{filter:i=>!/sup|inf/.test(i.dataset.label)}}}});
+}
+
+/* ---------- OBJ 5 ---------- */
+let esc='sin',monto=998.6,mesPago=7;
+function rO5(){
+  seg('seg-esc',[['sin','Sin pago extraordinario'],['con','Con pago'],['esp','Esperado (6/11)']],esc,v=>{esc=v;draw27()});
+  const r=$('r-monto');r.value=monto;r.oninput=()=>{monto=+r.value;draw27()};
+  $('s-mes').innerHTML=MES.map((m,i)=>`<option value="${i+1}" ${i+1===mesPago?'selected':''}>${m}</option>`).join('');$('s-mes').onchange=e=>{mesPago=+e.target.value;draw27()};
+  draw27();
+  const E=D.fc.EMP_sFV.anio2027.mediana,I=D.fc.IND_sFV.anio2027.mediana,T=F.anio2027.mediana;
+  $('comp27').innerHTML=`<table><tbody>
+   <tr><td>Total sin FV, modelado directo</td><td class="n">${f0(T)}</td></tr>
+   <tr><td>Empresarial sin FV (modelo propio)</td><td class="n">${f0(E)}</td></tr>
+   <tr><td>Individual sin FV (modelo propio)</td><td class="n">${f0(I)}</td></tr>
+   <tr><td>Suma de componentes</td><td class="n">${f0(E+I)}</td></tr>
+   <tr><td>Diferencia total vs. componentes</td><td class="n">${f1((E+I)/T*100-100)} %</td></tr>
+   <tr><td>ETS(A,Ad,A) log, total sin FV (contraste)</td><td class="n">${f0(D.fc.TOT_sFV_ETS.anio2027)}</td></tr>
+   <tr><td>Cierre esperado 2026 sin FV</td><td class="n">${f0(D.base2026_sFV)}</td></tr>
+   <tr><td>Presupuesto 2026 (empresa)</td><td class="n">${f0(CI.presu_anual)}</td></tr></tbody></table>
+   <p class="note">La diferencia entre el total y la suma de componentes es pequeña; la reconciliación jerárquica queda como extensión. El ETS, más conservador, queda dentro del intervalo del SARIMA.</p>
+   <div class="callout"><b>Uso sugerido:</b> contrastar la suma de las plantillas de los ejecutivos (consolidación desde el 20 de octubre) con este rango. Una cifra por fuera del intervalo del 80 % exige una justificación explícita (nuevo contrato, retiro, pago extraordinario).</div>`;
+}
+function draw27(){
+  $('v-monto').textContent=f0(monto)+' M$';
+  $('r-monto').disabled=$('s-mes').disabled=(esc==='sin');
+  const add=esc==='sin'?0:(esc==='con'?monto:monto*6/11);
+  const sh=a=>a.slice(3).map((v,i)=>v+(i+1===mesPago?add:0));
+  const md=sh(F.mediana),lo8=sh(F.p10),hi8=sh(F.p90),lo9=sh(F.p2_5),hi9=sh(F.p97_5);
+  const A=F.anio2027;
+  $('kpi-27').innerHTML=[['Recaudo 2027 (mediana)',f0(A.mediana+add)+' M$',esc==='sin'?'Escenario sin pago':`Incluye ${f0(add)} M$ en ${MES[mesPago-1]}`],
+    ['Intervalo 80 %',`${f0(A.p10+add)} – ${f0(A.p90+add)}`,'M$'],['Intervalo 95 %',`${f0(A.p2_5+add)} – ${f0(A.p97_5+add)}`,'M$'],
+    ['Frente al presupuesto 2026',pct(((A.mediana+add)/CI.presu_anual-1)*100),'Variación de la mediana 2027']]
+    .map(([a,b,d])=>`<div class="kpi"><div class="lab">${a}</div><div class="val" style="font-size:1.45rem">${b}</div><div class="det">${d}</div></div>`).join('');
+  const hist=D.series.TOT.slice(-33); // ene-2024..sep-2026
+  const labs=[...D.meses.slice(-33),...D.fut];
+  const N=hist.length,pad=Array(N+3).fill(null);
+  const conn=a=>[...Array(N+2).fill(null),F.mediana[2],...a];
+  mk('c-27',{type:'line',data:{labels:labs,datasets:[
+    {label:'95 % sup',data:[...pad,...hi9],borderWidth:0,pointRadius:0,fill:'+1',backgroundColor:alpha(C.s2,.12)},{label:'95 % inf',data:[...pad,...lo9],borderWidth:0,pointRadius:0},
+    {label:'80 % sup',data:[...pad,...hi8],borderWidth:0,pointRadius:0,fill:'+1',backgroundColor:alpha(C.s2,.22)},{label:'80 % inf',data:[...pad,...lo8],borderWidth:0,pointRadius:0},
+    {label:'Histórico',data:[...hist,...Array(15).fill(null)],borderColor:C.s1,borderWidth:2,pointRadius:0},
+    {label:'Oct–dic 2026',data:[...Array(N-1).fill(null),hist[N-1],...F.mediana.slice(0,3),...Array(12).fill(null)],borderColor:C.s2,borderWidth:1.5,borderDash:[2,3],pointRadius:0},
+    {label:'Proyección 2027',data:conn(md),borderColor:C.s2,borderWidth:2,pointRadius:2,pointBackgroundColor:C.s2}]},
+    options:{scales:{y:{grid,title:{display:true,text:'M$'}},x:{grid:noGrid,ticks:{autoSkip:true,maxTicksLimit:16}}},plugins:{tooltip:{filter:i=>!/sup|inf/.test(i.dataset.label)}}}});
+  $('ef27').textContent=f0(md[0]+md[1]);
+  const tot=[md,lo8,hi8,lo9,hi9].map(a=>a.reduce((s,v)=>s+v,0));
+  table('tab-27',['Mes 2027','Mediana','80 % inf','80 % sup','95 % inf','95 % sup','Peso del mes'],
+    [...md.map((v,i)=>[MES[i]+(i+1===mesPago&&add?' ★':''),f1(v),f1(lo8[i]),f1(hi8[i]),f1(lo9[i]),f1(hi9[i]),pct(100*v/tot[0])]),
+     {_cls:'best',_cells:['<b>Suma meses</b>','<b>'+f0(tot[0])+'</b>','','','','','']}],[1,2,3,4,5,6]);
+}
+
+/* ---------- PENDIENTES ---------- */
+function rPend(){$('pend').innerHTML=D.pendientes.map(p=>`<li class="no">${p}</li>`).join('')}
+
+const R={resumen:rResumen,o1:rO1,o2:rO2,o3:rO3,o4:rO4,o5:rO5,pend:rPend},done={};
+function render(k){if(!done[k]){R[k]();done[k]=1}}
+$('fecha').textContent=D.generado;
+let start='resumen';try{const s=localStorage.getItem('exepaz-tab');if(s&&R[s])start=s}catch(e){}
+document.querySelectorAll('nav.tabs button')[TABS.findIndex(t=>t[0]===start)].click();
+</script>
+</body>
+</html>

@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exepaz Empresarial · Recaudo 2026–2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#F6F7F9; --surface:#FFFFFF; --ink:#0F172A; --ink2:#475569; --muted:#94A3B8; --line:#E2E8F0;
+  --primary:#3D008D; --accent:#ED1E79; --navy:#001A4D;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#6250d6;
+  --good:#0ca30c; --warn:#fab219; --crit:#d03b3b;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Montserrat',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.55}
+.mono,code{font-family:'Fira Code',monospace}
+header.top{background:linear-gradient(180deg,#001A4D,#002868);color:#fff;padding:22px 16px 0}
+.wrap{max-width:1240px;margin:0 auto;padding:0 16px}
+header.top .wrap{padding:0}
+.kicker{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#FDB913;font-weight:700}
+h1{font-size:1.55rem;margin:.25rem 0 .2rem;font-weight:800}
+.sub{color:#cbd5e1;font-size:.86rem;margin:0 0 14px}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:thin}
+nav.tabs button{background:transparent;border:0;color:#cbd5e1;font:600 .82rem 'Montserrat',system-ui,sans-serif;padding:11px 14px;border-radius:10px 10px 0 0;cursor:pointer;white-space:nowrap}
+nav.tabs button:hover{color:#fff;background:rgba(255,255,255,.07)}
+nav.tabs button[aria-selected="true"]{background:var(--bg);color:var(--primary)}
+main{padding:26px 0 40px}
+section.tab{display:none} section.tab.on{display:block}
+h2{font-size:1.3rem;margin:0 0 4px;color:var(--ink)}
+h3{font-size:1rem;margin:0 0 10px;color:var(--primary)}
+.lead{color:var(--ink2);max-width:860px;margin:0 0 20px}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+.kpi .lab{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink2);font-weight:700}
+.kpi .val{font-size:2rem;font-weight:800;margin:4px 0 2px;font-variant-numeric:tabular-nums}
+.kpi .det{font-size:.8rem;color:var(--ink2)}
+.chart{position:relative;height:320px}
+.chart.sm{height:250px}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th,td{padding:7px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:#F5F0FA;color:var(--navy);font-weight:700;font-size:.75rem;position:sticky;top:0}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;font-family:'Fira Code',monospace;font-size:.78rem}
+tr.best td{background:#ECFDF5}
+.scroll{overflow-x:auto;max-height:440px;overflow-y:auto;border:1px solid var(--line);border-radius:10px}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:999px;font-size:.72rem;font-weight:700}
+.p-good{background:#DCFCE7;color:#166534}.p-warn{background:#FEF3C7;color:#92400E}.p-crit{background:#FEE2E2;color:#991B1B}
+.callout{border-left:4px solid var(--primary);background:#F3F0FC;border-radius:10px;padding:12px 14px;font-size:.86rem;margin:14px 0}
+.callout.warn{border-color:#FDB913;background:#FFFBEB}
+.callout.ok{border-color:var(--good);background:#ECFDF5}
+.callout b{color:var(--navy)}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 14px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:#fff}
+.seg button{border:0;background:#fff;color:var(--ink2);padding:7px 13px;font:600 .78rem 'Montserrat',system-ui,sans-serif;cursor:pointer}
+.seg button[aria-pressed="true"]{background:linear-gradient(140deg,#3D008D,#ED1E79);color:#fff}
+label.ctl{font-size:.8rem;color:var(--ink2);font-weight:600;display:flex;align-items:center;gap:8px}
+select,input[type=range]{font:inherit}
+select{padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.bar{height:10px;background:#EEF2F7;border-radius:6px;overflow:hidden;position:relative}
+.bar i{display:block;height:100%;border-radius:6px}
+.obj{display:grid;grid-template-columns:minmax(0,1fr) 150px 54px;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.obj:last-child{border-bottom:0}
+.obj .t{font-weight:600;font-size:.86rem}
+.obj .e{font-size:.76rem;color:var(--ink2)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.76rem;color:var(--ink2);margin-top:8px}
+.legend span::before{content:"";display:inline-block;width:12px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle;background:var(--c)}
+.legend span.box::before{height:10px;opacity:.35}
+ul.chk{list-style:none;padding:0;margin:0;font-size:.84rem}
+ul.chk li{padding:6px 0;border-bottom:1px dashed var(--line);display:flex;gap:8px}
+ul.chk li::before{content:"✓";color:var(--good);font-weight:800}
+ul.chk li.no::before{content:"○";color:var(--muted)}
+.rule{background:#0F172A;color:#E2E8F0;border-radius:12px;padding:16px;font-size:.84rem}
+.rule b{color:#FDB913}
+footer{background:#001A4D;color:#cbd5e1;font-size:.78rem;padding:20px 0}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
+.note{font-size:.74rem;color:var(--ink2);margin-top:8px}
+@media (max-width:640px){.obj{grid-template-columns:1fr 54px}.obj .bar{grid-column:1/-1;order:3}.kpi .val{font-size:1.6rem}h1{font-size:1.25rem}}
+@media print{nav.tabs,.controls{display:none}section.tab{display:block;break-before:page}.card{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="kicker">Universidad Santo Tomás · Consultoría Estadística 2026-II</div>
+    <h1>Recaudo y cumplimiento presupuestal de Exepaz Empresarial</h1>
+    <p class="sub">Seguimiento 2026 y proyección 2027 · Jardines de Paz S.A. · Lincy Janeth Barón Pedraza · Datos: enero 2016 – septiembre 2026 (corte 30-sep-2026)</p>
+    <nav class="tabs" role="tablist" id="tabs"></nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ RESUMEN ============ -->
+<section class="tab on" id="t-resumen" role="tabpanel">
+  <h2>Resumen ejecutivo</h2>
+  <p class="lead">Este aplicativo recalcula todo desde los dos libros de recaudo y el archivo de seguimiento de metas. Cada pestaña corresponde a un objetivo específico del anteproyecto y muestra la evidencia con la que se declara su avance.</p>
+  <div class="grid g4" id="kpis"></div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card">
+      <h3>Avance frente a los objetivos específicos</h3>
+      <div id="avance"></div>
+      <p class="note">Mismo peso para los cinco objetivos. Avance anterior (18-oct-2026): 48 %. Si se duda entre dos niveles, se reporta el de abajo.</p>
+    </div>
+    <div class="card">
+      <h3>Lo que hay que saber</h3>
+      <div id="claves"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ OBJ 1 ============ -->
+<section class="tab" id="t-o1" role="tabpanel">
+  <h2>Objetivo 1 · Base analítica reproducible</h2>
+  <p class="lead">Base larga registro-mes construida desde las columnas D–O de cada hoja, conservando libro, hoja y fila de origen. Sin fusionar ni eliminar filas (regla R5).</p>
+  <div class="grid g2">
+    <div class="card"><h3>Controles de integridad</h3><ul class="chk" id="controles"></ul></div>
+    <div class="card"><h3>Conciliación anual por libro (millones de pesos corrientes)</h3><div class="scroll"><table id="tab-anual"></table></div>
+      <p class="note">Recalculado desde las filas de datos; excluye la fila «TOTAL GENERAL» y la columna P.</p></div>
+  </div>
+</section>
+
+<!-- ============ OBJ 2 ============ -->
+<section class="tab" id="t-o2" role="tabpanel">
+  <h2>Objetivo 2 · Caracterizar 2026 y fijar la regla de atípicos</h2>
+  <p class="lead">Tendencia, estacionalidad y pagos extraordinarios frente a la historia. El grupo Fondavivienda reúne los contratos con «DAVIVIENDA» en el nombre, en ambos libros.</p>
+  <div class="card">
+    <div class="controls">
+      <div class="seg" id="seg-serie"></div>
+      <label class="ctl"><input type="checkbox" id="chk-sfv" checked> Mostrar serie sin Fondavivienda</label>
+    </div>
+    <div class="chart"><canvas id="c-serie"></canvas></div>
+    <div class="legend" id="lg-serie"></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h3>Peso promedio de cada mes en el año (2016–2025)</h3><div class="chart sm"><canvas id="c-peso"></canvas></div>
+      <div class="legend"><span style="--c:var(--s1)">Total con todos los contratos</span><span style="--c:var(--s2)">Total sin Fondavivienda</span></div>
+      <p class="note" id="nota-peso"></p></div>
+    <div class="card"><h3>Pago intermitente del grupo Fondavivienda</h3><div class="scroll"><table id="tab-fv"></table></div></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h3>Crecimiento enero–septiembre 2026 frente a 2025</h3><div class="scroll"><table id="tab-crec"></table></div>
+      <h3 style="margin-top:16px">Fuerza de componentes (STL, serie en logaritmo)</h3><div class="scroll"><table id="tab-stl"></table></div></div>
+    <div class="card"><h3>Atípicos detectados (residuo STL fuera de 3 × RIC)</h3><div class="scroll" style="max-height:300px"><table id="tab-atip"></table></div>
+      <p class="note">Enero y febrero de 2026 son un desplazamiento de mes de FONCEL y SOMEC; septiembre de 2026 puede estar incompleto por el corte del 30-sep.</p></div>
+  </div>
+  <div class="rule" style="margin-top:16px">
+    <b>Regla R7 · pagos extraordinarios (fijada antes de evaluar)</b><br>
+    1) La serie principal es el total de Exepaz Empresarial con todos los contratos; nunca se eliminan pagos de la serie.<br>
+    2) Para pronosticar se modela la serie <b>sin el grupo Fondavivienda</b> (sensibilidad), porque su pago no sigue la estacionalidad: ocurrió en 6 de 11 años, casi siempre en julio.<br>
+    3) El pago se reincorpora como <b>escenario</b>: «sin pago», «con pago» (monto del orden de los observados) y «esperado» (monto × frecuencia histórica, 6/11).<br>
+    4) Un residuo STL fuera de 3 × RIC se marca como atípico y se interpreta con el detalle por contrato antes de cualquier decisión.<br>
+    5) Declaración: la regla surgió de explorar todos los datos, incluidos 2025–2026.
+  </div>
+</section>
+
+<!-- ============ OBJ 3 ============ -->
+<section class="tab" id="t-o3" role="tabpanel">
+  <h2>Objetivo 3 · Cumplimiento del presupuesto 2026 a septiembre</h2>
+  <p class="lead">Razón recaudo / presupuesto, mensual y acumulada. Recaudo: libros de Exepaz Empresarial. Presupuesto: archivo de seguimiento de metas por ejecutivo (hoja 2026, totales empresarial e individual).</p>
+  <div class="controls"><div class="seg" id="seg-cump"></div></div>
+  <div class="grid g4" id="kpi-cump"></div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h3>Recaudo frente a presupuesto por mes (M$)</h3><div class="chart sm"><canvas id="c-cmes"></canvas></div>
+      <div class="legend"><span class="box" style="--c:var(--s1)">Recaudo real</span><span class="box" style="--c:var(--muted)">Presupuesto</span></div></div>
+    <div class="card"><h3>Cumplimiento acumulado (%)</h3><div class="chart sm"><canvas id="c-cacum"></canvas></div>
+      <div class="legend"><span style="--c:var(--s1)">Con todos los contratos</span><span style="--c:var(--s2)">Sin Fondavivienda</span><span style="--c:var(--muted)">Meta 100 %</span></div></div>
+  </div>
+  <div class="card" style="margin-top:16px"><h3>Desviación por mes y contratos que la explican</h3><div class="scroll"><table id="tab-desv"></table></div></div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h3>Contratos que más restan (ene–sep 2026 vs 2025, M$)</h3><div class="scroll"><table id="tab-neg"></table></div></div>
+    <div class="card"><h3>Contratos que más suman (ene–sep 2026 vs 2025, M$)</h3><div class="scroll"><table id="tab-pos"></table></div></div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3>Cumplimiento por ejecutivo y canal (reporte Jake Mate, seudonimizado)</h3>
+    <div class="grid g4" id="kpi-rep" style="margin-bottom:12px"></div>
+    <div class="scroll"><table id="tab-ej"></table></div>
+    <p class="note">«Sin pago» resta $998,6 M al ejecutivo que tiene el contrato 2338. El recaudo por ejecutivo depende de la composición de su cartera: no es una medida de productividad individual.</p>
+  </div>
+</section>
+
+<!-- ============ OBJ 4 ============ -->
+<section class="tab" id="t-o4" role="tabpanel">
+  <h2>Objetivo 4 · Validar, seleccionar métodos y estimar el cierre 2026</h2>
+  <p class="lead">Diagnóstico de la serie y comparación con origen móvil. Desarrollo: 49 orígenes (dic-2019 a dic-2023), horizonte 1–12, con datos hasta dic-2024. Prueba final: orígenes dic-2024 a ago-2026, usada una sola vez.</p>
+  <div class="card"><h3>Diagnóstico (serie en logaritmo)</h3><div class="scroll"><table id="tab-diag"></table></div>
+    <p class="note">ADF: H₀ raíz unitaria. KPSS: H₀ estacionariedad. Ljung-Box sobre residuos del SARIMA ajustado hasta dic-2024. λ de Box-Cox cercano a 0 o negativo respalda el logaritmo.</p></div>
+  <div class="card" style="margin-top:16px">
+    <div class="controls"><div class="seg" id="seg-eval"></div><div class="seg" id="seg-per"></div></div>
+    <div class="scroll"><table id="tab-eval"></table></div>
+    <p class="note">MAE y RMSE en millones. MASE &lt; 1: mejor que el estacional ingenuo. Cobertura: % de valores reales dentro del intervalo (ideal ≈ 80 % y 95 %). APE 12: error absoluto del total de 12 meses, el que importa para el presupuesto anual. El método actual no produce intervalos.</p>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h3>MASE por horizonte (desarrollo)</h3><div class="chart sm"><canvas id="c-h"></canvas></div><div class="legend" id="lg-h"></div></div>
+    <div class="card"><h3>Selección del método</h3><div id="seleccion"></div></div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h3>Cierre esperado 2026</h3>
+    <div class="controls"><div class="seg" id="seg-cierre"></div></div>
+    <div class="grid g4" id="kpi-cierre"></div>
+    <div class="chart sm" style="margin-top:14px"><canvas id="c-od"></canvas></div>
+    <div class="legend"><span style="--c:var(--s1)">Real 2026</span><span style="--c:var(--s2)">Pronóstico (mediana)</span><span class="box" style="--c:var(--s2)">Intervalo 80 % / 95 %</span><span style="--c:var(--muted)">Presupuesto</span></div>
+    <p class="note">Cierre = real ene–sep (con el pago de junio) + pronóstico oct–dic de la serie sin Fondavivienda (R7). Intervalos por 5.000 trayectorias simuladas del SARIMA.</p>
+  </div>
+</section>
+
+<!-- ============ OBJ 5 ============ -->
+<section class="tab" id="t-o5" role="tabpanel">
+  <h2>Objetivo 5 · Proyección mensual 2027 con escenarios</h2>
+  <p class="lead">SARIMA (0,1,1)(0,1,1)₁₂ en logaritmo sobre la serie sin Fondavivienda, ajustado con todo el histórico. El pago extraordinario se suma según el escenario elegido.</p>
+  <div class="card">
+    <div class="controls">
+      <div class="seg" id="seg-esc"></div>
+      <label class="ctl">Monto del pago <input type="range" id="r-monto" min="0" max="1500" step="10"> <span class="mono" id="v-monto"></span></label>
+      <label class="ctl">Mes <select id="s-mes"></select></label>
+    </div>
+    <div class="grid g4" id="kpi-27"></div>
+    <div class="chart" style="margin-top:14px"><canvas id="c-27"></canvas></div>
+    <div class="legend"><span style="--c:var(--s1)">Histórico 2024–2026</span><span style="--c:var(--s2)">Proyección (mediana)</span><span class="box" style="--c:var(--s2)">Intervalo 80 % / 95 %</span></div>
+    <p class="note">Ojo con enero y febrero: el modelo hereda el desplazamiento de FONCEL y SOMEC de enero a febrero de 2026. Para presupuestar conviene leer enero + febrero juntos (<span id="ef27"></span> M$) hasta que la empresa confirme en qué mes pagarán en 2027.</p>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card"><h3>Tabla mensual 2027 (M$)</h3><div class="scroll"><table id="tab-27"></table></div></div>
+    <div class="card"><h3>Componentes y contraste</h3><div id="comp27"></div></div>
+  </div>
+</section>
+
+<!-- ============ PENDIENTES ============ -->
+<section class="tab" id="t-pend" role="tabpanel">
+  <h2>Pendientes, limitaciones y método</h2>
+  <div class="grid g2">
+    <div class="card"><h3>Lo que falta para el 100 %</h3><ul class="chk" id="pend"></ul></div>
+    <div class="card"><h3>Limitaciones</h3><ul class="chk">
+      <li class="no">Solo se observan contratos con recaudo positivo; no hay mora, vigencias ni retiros.</li>
+      <li class="no">Cifras nominales; el crecimiento real exige deflactar con el IPC mensual (DANE).</li>
+      <li class="no">El periodo de prueba (2025–2026) ya se había explorado: no es completamente independiente.</li>
+      <li class="no">El grupo Fondavivienda se identificó por el nombre del contrato.</li>
+      <li class="no">El reporte y los libros fechan el recaudo de forma distinta (ene/feb 2026).</li>
+      <li class="no">Las proyecciones son insumos, no compromisos presupuestales (comunicación del 8-sep-2026).</li>
+    </ul></div>
+  </div>
+  <div class="card" style="margin-top:16px"><h3>Reproducibilidad</h3>
+    <p style="font-size:.86rem;margin:0">Todas las cifras de esta página salen de los scripts de Python que la acompañan (<code>s1_base.py</code>, <code>s3_analisis.py</code>, <code>s4_modelos.py</code>, <code>construir_html.py</code>), que leen los tres archivos de la empresa sin modificarlos. Para actualizar con los datos de octubre–diciembre basta reemplazar los libros y volver a ejecutarlos en ese orden. Nombres de asesores y ejecutivos seudonimizados (Ley 1581 de 2012).</p></div>
+</section>
+
+</main>
+<footer><div class="wrap"><span>Exepaz Empresarial · Jardines de Paz S.A. · Uso académico</span><span>Generado el <span id="fecha"></span> · Cifras en millones de pesos corrientes (M$)</span></div></footer>
+
+<script>
+const D = {"meses": ["2016-01", "2016-02", "2016-03", "2016-04", "2016-05", "2016-06", "2016-07", "2016-08", "2016-09", "2016-10", "2016-11", "2016-12", "2017-01", "2017-02", "2017-03", "2017-04", "2017-05", "2017-06", "2017-07", "2017-08", "2017-09", "2017-10", "2017-11", "2017-12", "2018-01", "2018-02", "2018-03", "2018-04", "2018-05", "2018-06", "2018-07", "2018-08", "2018-09", "2018-10", "2018-11", "2018-12", "2019-01", "2019-02", "2019-03", "2019-04", "2019-05", "2019-06", "2019-07", "2019-08", "2019-09", "2019-10", "2019-11", "2019-12", "2020-01", "2020-02", "2020-03", "2020-04", "2020-05", "2020-06", "2020-07", "2020-08", "2020-09", "2020-10", "2020-11", "2020-12", "2021-01", "2021-02", "2021-03", "2021-04", "2021-05", "2021-06", "2021-07", "2021-08", "2021-09", "2021-10", "2021-11", "2021-12", "2022-01", "2022-02", "2022-03", "2022-04", "2022-05", "2022-06", "2022-07", "2022-08", "2022-09", "2022-10", "2022-11", "2022-12", "2023-01", "2023-02", "2023-03", "2023-04", "2023-05", "2023-06", "2023-07", "2023-08", "2023-09", "2023-10", "2023-11", "2023-12", "2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08", "2026-09"], "series": {"EMP": [276.671, 419.758, 351.465, 361.136, 486.594, 517.445, 961.756, 497.76, 455.937, 364.86, 804.891, 494.593, 517.623, 446.703, 374.988, 461.472, 514.5, 642.61, 982.265, 606.484, 494.995, 607.779, 613.71, 541.887, 604.691, 517.416, 514.774, 595.557, 495.676, 854.282, 610.176, 546.765, 512.089, 646.534, 546.947, 685.069, 834.013, 511.994, 454.197, 494.193, 553.979, 715.645, 1045.882, 702.842, 457.981, 663.421, 549.682, 795.823, 866.639, 499.704, 413.719, 489.588, 658.771, 761.294, 1161.337, 579.834, 482.169, 815.346, 416.741, 670.411, 1042.852, 547.531, 474.935, 580.812, 545.423, 784.129, 1429.821, 688.945, 597.593, 839.542, 561.962, 594.833, 1193.257, 607.32, 458.82, 504.97, 626.89, 865.838, 683.409, 795.754, 536.101, 802.907, 576.849, 651.801, 1348.607, 600.817, 497.137, 534.144, 648.854, 895.063, 762.377, 817.796, 718.087, 870.471, 652.507, 699.363, 1462.931, 608.964, 565.112, 619.455, 669.794, 968.702, 903.635, 640.944, 1067.702, 900.131, 613.637, 1020.086, 1484.595, 655.736, 649.629, 671.349, 641.982, 1076.642, 884.948, 435.554, 1270.155, 974.151, 608.833, 1201.117, 696.508, 1634.286, 785.895, 671.166, 614.477, 2341.537, 885.105, 983.58, 849.235], "IND": [118.235, 14.909, 41.184, 26.015, 34.923, 46.767, 56.482, 35.298, 46.409, 33.835, 31.638, 136.746, 95.048, 42.875, 47.236, 38.348, 41.447, 57.907, 58.183, 69.687, 42.062, 39.58, 61.33, 205.513, 78.06, 44.036, 46.227, 36.856, 51.792, 54.645, 71.206, 70.779, 36.295, 44.789, 60.808, 53.119, 50.379, 33.377, 50.896, 37.95, 48.162, 63.202, 95.924, 74.994, 55.636, 47.181, 61.349, 51.843, 57.387, 39.18, 52.967, 45.584, 46.683, 59.177, 79.562, 131.244, 49.918, 49.994, 88.613, 63.784, 50.389, 41.106, 70.935, 41.293, 50.068, 90.296, 166.805, 98.691, 44.622, 58.605, 91.244, 60.874, 56.25, 47.805, 57.959, 48.307, 61.234, 97.645, 149.332, 118.889, 46.007, 69.232, 84.758, 63.095, 63.171, 47.853, 129.956, 57.699, 76.754, 104.225, 145.968, 105.928, 40.127, 51.588, 103.841, 68.598, 124.535, 39.845, 65.648, 46.212, 60.253, 113.231, 168.804, 120.791, 40.703, 78.43, 80.123, 94.726, 129.834, 35.769, 74.713, 71.469, 46.678, 116.313, 230.797, 117.92, 70.323, 98.471, 88.125, 98.963, 126.713, 73.02, 86.283, 73.507, 58.098, 202.178, 243.455, 169.058, 61.089], "TOT": [394.906, 434.668, 392.649, 387.151, 521.517, 564.211, 1018.239, 533.057, 502.345, 398.695, 836.529, 631.338, 612.671, 489.578, 422.224, 499.82, 555.947, 700.517, 1040.448, 676.17, 537.057, 647.36, 675.04, 747.4, 682.751, 561.452, 561.001, 632.413, 547.468, 908.927, 681.382, 617.544, 548.384, 691.324, 607.755, 738.188, 884.392, 545.371, 505.092, 532.143, 602.141, 778.846, 1141.806, 777.836, 513.617, 710.602, 611.031, 847.666, 924.026, 538.884, 466.686, 535.172, 705.454, 820.471, 1240.899, 711.078, 532.087, 865.341, 505.354, 734.195, 1093.241, 588.637, 545.869, 622.106, 595.491, 874.425, 1596.626, 787.636, 642.215, 898.148, 653.206, 655.707, 1249.508, 655.125, 516.779, 553.277, 688.123, 963.483, 832.742, 914.643, 582.108, 872.139, 661.607, 714.896, 1411.778, 648.67, 627.093, 591.843, 725.607, 999.287, 908.344, 923.724, 758.214, 922.059, 756.348, 767.961, 1587.466, 648.809, 630.76, 665.667, 730.047, 1081.933, 1072.439, 761.735, 1108.406, 978.561, 693.76, 1114.812, 1614.43, 691.505, 724.342, 742.818, 688.661, 1192.955, 1115.745, 553.473, 1340.478, 1072.622, 696.958, 1300.08, 823.221, 1707.306, 872.179, 744.673, 672.576, 2543.715, 1128.56, 1152.637, 910.324], "EMP_sFV": [276.671, 419.758, 351.465, 361.136, 486.594, 509.502, 455.412, 497.76, 455.937, 364.86, 804.891, 494.593, 517.623, 446.703, 374.988, 461.472, 507.148, 642.61, 442.781, 606.484, 489.238, 607.779, 613.71, 541.887, 604.691, 517.416, 514.774, 595.557, 495.676, 854.282, 610.176, 546.765, 512.089, 646.534, 546.947, 685.069, 834.013, 511.994, 454.197, 494.193, 553.979, 715.645, 555.448, 688.706, 457.981, 663.421, 549.682, 795.823, 866.639, 499.704, 413.719, 489.588, 658.771, 761.294, 594.485, 579.834, 482.169, 815.346, 416.741, 670.411, 1042.852, 547.531, 474.935, 580.812, 545.423, 784.129, 582.753, 688.945, 597.593, 839.542, 561.962, 594.833, 1193.257, 607.32, 458.82, 504.97, 626.89, 865.838, 683.409, 795.754, 536.101, 802.907, 576.849, 651.801, 1348.607, 600.817, 497.137, 534.144, 648.854, 895.063, 762.377, 817.796, 718.087, 870.471, 652.507, 699.363, 1462.931, 608.964, 565.112, 619.455, 669.794, 968.702, 903.635, 640.944, 1067.702, 900.131, 613.637, 1020.086, 1484.595, 655.736, 649.629, 671.349, 641.982, 1076.642, 884.948, 435.554, 1270.155, 974.151, 608.833, 1201.117, 696.508, 1634.286, 785.895, 671.166, 614.477, 1342.924, 885.105, 983.58, 849.235], "IND_sFV": [118.142, 14.909, 41.184, 25.925, 34.529, 31.833, 47.096, 33.318, 41.27, 32.521, 31.369, 136.622, 93.681, 42.756, 46.889, 38.274, 41.447, 49.082, 48.051, 65.103, 40.816, 39.345, 61.098, 205.513, 77.382, 44.036, 46.064, 36.846, 51.719, 54.527, 71.206, 70.779, 36.295, 44.789, 60.808, 53.119, 50.379, 33.377, 50.896, 37.95, 48.162, 63.118, 94.899, 59.878, 50.287, 47.168, 61.217, 51.799, 57.362, 39.18, 52.967, 45.584, 46.104, 56.992, 79.039, 130.51, 44.093, 48.783, 88.352, 62.29, 50.198, 41.08, 65.933, 41.098, 50.068, 82.443, 156.577, 96.365, 44.351, 58.605, 91.244, 60.874, 56.25, 47.805, 55.831, 48.307, 60.01, 97.645, 149.332, 118.889, 46.007, 69.232, 84.758, 63.095, 63.171, 47.853, 129.956, 57.699, 76.754, 104.225, 145.968, 105.928, 40.127, 51.588, 103.841, 68.598, 124.535, 39.845, 65.648, 46.212, 60.253, 113.231, 168.804, 120.791, 40.703, 78.43, 80.123, 94.726, 129.834, 35.769, 74.713, 71.469, 46.678, 116.313, 230.797, 117.92, 70.323, 98.471, 88.125, 98.963, 126.713, 73.02, 86.283, 73.507, 58.098, 136.965, 234.378, 167.729, 59.398], "TOT_sFV": [394.813, 434.668, 392.649, 387.061, 521.123, 541.334, 502.508, 531.077, 497.207, 397.381, 836.26, 631.215, 611.304, 489.459, 421.877, 499.746, 548.595, 691.692, 490.833, 671.586, 530.053, 647.124, 674.808, 747.4, 682.073, 561.452, 560.838, 632.403, 547.395, 908.809, 681.382, 617.544, 548.384, 691.324, 607.755, 738.188, 884.392, 545.371, 505.092, 532.143, 602.141, 778.762, 650.347, 748.584, 508.268, 710.59, 610.899, 847.622, 924.002, 538.884, 466.686, 535.172, 704.875, 818.286, 673.524, 710.344, 526.262, 864.13, 505.094, 732.701, 1093.049, 588.611, 540.867, 621.91, 595.491, 866.573, 739.33, 785.31, 641.944, 898.148, 653.206, 655.707, 1249.508, 655.125, 514.651, 553.277, 686.9, 963.483, 832.742, 914.643, 582.108, 872.139, 661.607, 714.896, 1411.778, 648.67, 627.093, 591.843, 725.607, 999.287, 908.344, 923.724, 758.214, 922.059, 756.348, 767.961, 1587.466, 648.809, 630.76, 665.667, 730.047, 1081.933, 1072.439, 761.735, 1108.406, 978.561, 693.76, 1114.812, 1614.43, 691.505, 724.342, 742.818, 688.661, 1192.955, 1115.745, 553.473, 1340.478, 1072.622, 696.958, 1300.08, 823.221, 1707.306, 872.179, 744.673, 672.576, 1479.889, 1119.483, 1151.309, 908.633], "FV": [0.093, 0.0, 0.0, 0.09, 0.394, 22.877, 515.73, 1.98, 5.139, 1.314, 0.269, 0.123, 1.367, 0.119, 0.346, 0.074, 7.352, 8.825, 549.616, 4.584, 7.004, 0.236, 0.232, 0.0, 0.679, 0.0, 0.163, 0.01, 0.073, 0.118, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.084, 491.459, 29.252, 5.349, 0.013, 0.132, 0.044, 0.024, 0.0, 0.0, 0.0, 0.579, 2.185, 567.376, 0.734, 5.825, 1.211, 0.26, 1.493, 0.192, 0.026, 5.002, 0.195, 0.0, 7.853, 857.296, 2.326, 0.271, 0.0, 0.0, 0.0, 0.0, 0.0, 2.128, 0.0, 1.223, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1063.826, 9.077, 1.328, 1.691]}, "car": {"EMP": {"anual": {"2016": 5992.9, "2017": 6805.0, "2018": 7130.0, "2019": 7779.7, "2020": 7815.6, "2021": 8688.4, "2022": 8303.9, "2023": 9045.2, "2024": 10041.1, "2025": 10554.7, "2026": 9461.8}, "js25": 7770.6, "js26": 9461.8, "crec_js": 21.8, "cagr": 6.49}, "IND": {"anual": {"2016": 622.4, "2017": 799.2, "2018": 648.6, "2019": 670.9, "2020": 764.1, "2021": 864.9, "2022": 900.5, "2023": 995.7, "2024": 1033.3, "2025": 1179.4, "2026": 1093.4}, "js25": 893.8, "js26": 1093.4, "crec_js": 22.3, "cagr": 7.36}, "TOT": {"anual": {"2016": 6615.3, "2017": 7604.2, "2018": 7778.6, "2019": 8450.5, "2020": 8579.6, "2021": 9553.3, "2022": 9204.4, "2023": 10040.9, "2024": 11074.4, "2025": 11734.1, "2026": 10555.2}, "js25": 8664.4, "js26": 10555.2, "crec_js": 21.8, "cagr": 6.58}, "EMP_sFV": {"anual": {"2016": 5478.6, "2017": 6252.4, "2018": 7130.0, "2019": 7275.1, "2020": 7248.7, "2021": 7841.3, "2022": 8303.9, "2023": 9045.2, "2024": 10041.1, "2025": 10554.7, "2026": 8463.2}, "js25": 7770.6, "js26": 8463.2, "crec_js": 8.9, "cagr": 7.56}, "IND_sFV": {"anual": {"2016": 588.7, "2017": 772.1, "2018": 647.6, "2019": 649.1, "2020": 751.3, "2021": 838.8, "2022": 897.2, "2023": 995.7, "2024": 1033.3, "2025": 1179.4, "2026": 1016.1}, "js25": 893.8, "js26": 1016.1, "crec_js": 13.7, "cagr": 8.03}, "TOT_sFV": {"anual": {"2016": 6067.3, "2017": 7024.5, "2018": 7777.5, "2019": 7924.2, "2020": 8000.0, "2021": 8680.1, "2022": 9201.1, "2023": 10040.9, "2024": 11074.4, "2025": 11734.1, "2026": 9479.3}, "js25": 8664.4, "js26": 9479.3, "crec_js": 9.4, "cagr": 7.6}, "peso_mes": {"EMP": [11.24, 6.63, 5.8, 6.5, 7.19, 9.82, 11.78, 7.84, 7.81, 9.02, 7.5, 8.86], "IND": [9.94, 4.64, 7.45, 5.27, 6.22, 9.29, 13.85, 11.06, 5.73, 6.65, 8.85, 11.04], "TOT": [11.12, 6.45, 5.96, 6.38, 7.1, 9.77, 11.98, 8.14, 7.6, 8.8, 7.62, 9.09], "TOT_sFV": [11.5, 6.71, 6.18, 6.64, 7.39, 10.09, 8.65, 8.44, 7.85, 9.14, 7.97, 9.45], "EMP_sFV": [11.64, 6.92, 6.04, 6.78, 7.51, 10.21, 8.13, 8.18, 8.1, 9.4, 7.87, 9.22]}, "fv": [{"anio": 2016, "emp": 5992.9, "fv": 548.0, "mes_max": 7, "fv_max": 515.7, "pct_mes": 50.6}, {"anio": 2017, "emp": 6805.0, "fv": 579.8, "mes_max": 7, "fv_max": 549.6, "pct_mes": 52.8}, {"anio": 2018, "emp": 7130.0, "fv": 1.0, "mes_max": 1, "fv_max": 0.7, "pct_mes": 0.1}, {"anio": 2019, "emp": 7779.7, "fv": 526.3, "mes_max": 7, "fv_max": 491.5, "pct_mes": 43.0}, {"anio": 2020, "emp": 7815.6, "fv": 579.7, "mes_max": 7, "fv_max": 567.4, "pct_mes": 45.7}, {"anio": 2021, "emp": 8688.4, "fv": 873.2, "mes_max": 7, "fv_max": 857.3, "pct_mes": 53.7}, {"anio": 2022, "emp": 8303.9, "fv": 3.4, "mes_max": 3, "fv_max": 2.1, "pct_mes": 0.4}, {"anio": 2023, "emp": 9045.2, "fv": 0.0, "mes_max": null, "fv_max": 0.0, "pct_mes": 0}, {"anio": 2024, "emp": 10041.1, "fv": 0.0, "mes_max": null, "fv_max": 0.0, "pct_mes": 0}, {"anio": 2025, "emp": 10554.7, "fv": 0.0, "mes_max": null, "fv_max": 0.0, "pct_mes": 0}, {"anio": 2026, "emp": 9461.8, "fv": 1075.9, "mes_max": 6, "fv_max": 1063.8, "pct_mes": 41.8}], "contratos": {"EMP": {"neg": [{"c": 1924, "n": "CORPORACIÓN UNIVERSITARIA MINUTO DE DIOS", "v25": 348.9, "v26": 162.7, "d": -186.2}, {"c": 1294, "n": "FONDO EMPLEADOS DEL MINISTERIO DE COMERCIO", "v25": 54.9, "v26": 14.8, "d": -40.1}, {"c": 1798, "n": "FARMA DE COLOMBIA SAS", "v25": 30.0, "v26": 2.6, "d": -27.4}, {"c": 1933, "n": "ASOCIACION MUTUAL BURSATIL ASOBURSATIL", "v25": 22.3, "v26": 0.0, "d": -22.3}, {"c": 2193, "n": "RUGE ASSIST S.A.S", "v25": 83.8, "v26": 64.1, "d": -19.8}, {"c": 347, "n": "FIDUOCCIDENTE S A - FIDUCIARIA DE OCCIDE", "v25": 24.3, "v26": 5.9, "d": -18.5}, {"c": 1676, "n": "TECNA INTEGRITY AND CORROSION ENGINEERING S.A. TECNA ICE S.A", "v25": 15.3, "v26": 0.0, "d": -15.3}, {"c": 1568, "n": "TECNA S.A. - TECN. ELECTRICAS APLICADAS", "v25": 12.3, "v26": 0.0, "d": -12.3}], "pos": [{"c": 2338, "n": "FONDAVIVIENDA FONDO EMPLEADOS DAVIVIENDA", "v25": 0.0, "v26": 998.6, "d": 998.6}, {"c": 1347, "n": "FONDO DE EMPLEADOS DE SEGUROS BOLIVAR  ADEBOL", "v25": 360.3, "v26": 494.3, "d": 134.1}, {"c": 1067, "n": "FONDO DE EMPLEADOS  OLIMPICA", "v25": 131.3, "v26": 197.7, "d": 66.4}, {"c": 2099, "n": "TELEPERFORMANCE COLOMBIA SAS", "v25": 132.5, "v26": 198.9, "d": 66.3}, {"c": 1882, "n": "GRUPO VERZA S.A.S.", "v25": 96.8, "v26": 134.1, "d": 37.2}, {"c": 572, "n": "COOP MULTIACTIVA DE PROFESIONALES SOMEC", "v25": 336.9, "v26": 371.6, "d": 34.7}, {"c": 260, "n": "FONDO UNIANDES UNIVERSIDAD DE LOS ANDES", "v25": 248.6, "v26": 280.7, "d": 32.1}, {"c": 1624, "n": "TUGO S A S", "v25": 12.0, "v26": 44.0, "d": 32.0}], "neto": 1691.2, "n25": 351, "n26": 356}, "IND": {"neg": [{"c": 331, "n": "CONTRALORIA GENERAL DE LA REPUBLICA", "v25": 24.2, "v26": 21.0, "d": -3.3}, {"c": 285, "n": "JARDINES DE PAZ S.A.", "v25": 22.2, "v26": 19.9, "d": -2.4}, {"c": 333, "n": "CIALTA  S.A.S", "v25": 2.1, "v26": 0.0, "d": -2.1}, {"c": 440, "n": "MINISTERIO DE HACIENDA", "v25": 11.0, "v26": 9.6, "d": -1.4}, {"c": 1549, "n": "EX-ASOCIADOS FONCEL", "v25": 5.4, "v26": 4.1, "d": -1.2}, {"c": 2163, "n": "EX-FONBOLIVAR2163", "v25": 3.5, "v26": 2.5, "d": -1.0}, {"c": 371, "n": "CORRUGADOS DE COLOMBIA S.A.S", "v25": 6.3, "v26": 5.3, "d": -1.0}, {"c": 2274, "n": "C.O - TRANSPORTES CSC S.A.S.- EN REORGANIZACION2274", "v25": 0.7, "v26": 0.0, "d": -0.7}], "pos": [{"c": 2340, "n": "DAVIVIENDA CLUB DE PENSIONADOS", "v25": 0.0, "v26": 58.7, "d": 58.7}, {"c": 1370, "n": "COMFACUNDI (III) - CAJA COMP. FAMILIAR", "v25": 87.3, "v26": 102.2, "d": 14.9}, {"c": 2259, "n": "SEGUROS CONFIANZA II2259", "v25": 4.7, "v26": 15.8, "d": 11.2}, {"c": 2061, "n": "FUNERARIA GARAGOA II2061", "v25": 34.3, "v26": 43.1, "d": 8.9}, {"c": 1843, "n": "EX-ADEBOL - IND. FONDO DE EMPLEADOS DE SEGUROS BOLIVAR", "v25": 55.5, "v26": 64.1, "d": 8.6}, {"c": 2339, "n": "SUB GRUPOS FONDAVIVIENDA", "v25": 0.0, "v26": 7.7, "d": 7.7}, {"c": 827, "n": "CEFOR - COOP DE EMP. DE FORMFIT DE COL.", "v25": 20.0, "v26": 26.8, "d": 6.7}, {"c": 1600, "n": "LAPSOFT SAS", "v25": 76.4, "v26": 83.1, "d": 6.7}], "neto": 199.6, "n25": 55, "n26": 66}}, "top_mes": [{"mes": 1, "total": 823.2, "top": [{"l": "EMP", "c": 2042, "n": "FEMPHA FONDO DE EMPLEADOS", "v": 139.0, "pct": 16.9}, {"l": "EMP", "c": 918, "n": "FONDO DE EMPLEADOS FONEMCAP", "v": 79.6, "pct": 9.7}, {"l": "IND", "c": 1370, "n": "COMFACUNDI (III) - CAJA COMP. FAMILIAR", "v": 77.3, "pct": 9.4}]}, {"mes": 2, "total": 1707.3, "top": [{"l": "EMP", "c": 889, "n": "FONCEL  FONDO DE EMPLEADOS DE COMCEL", "v": 397.4, "pct": 23.3}, {"l": "EMP", "c": 572, "n": "COOP MULTIACTIVA DE PROFESIONALES SOMEC", "v": 360.0, "pct": 21.1}, {"l": "EMP", "c": 1924, "n": "CORPORACIÓN UNIVERSITARIA MINUTO DE DIOS", "v": 81.6, "pct": 4.8}]}, {"mes": 3, "total": 872.2, "top": [{"l": "EMP", "c": 2099, "n": "TELEPERFORMANCE COLOMBIA SAS", "v": 46.5, "pct": 5.3}, {"l": "EMP", "c": 1576, "n": "NEWREST SERVICES COLOMBIA S.A.S (II)", "v": 44.7, "pct": 5.1}, {"l": "EMP", "c": 1924, "n": "CORPORACIÓN UNIVERSITARIA MINUTO DE DIOS", "v": 40.2, "pct": 4.6}]}, {"mes": 4, "total": 744.7, "top": [{"l": "EMP", "c": 1924, "n": "CORPORACIÓN UNIVERSITARIA MINUTO DE DIOS", "v": 40.9, "pct": 5.5}, {"l": "EMP", "c": 260, "n": "FONDO UNIANDES UNIVERSIDAD DE LOS ANDES", "v": 31.9, "pct": 4.3}, {"l": "EMP", "c": 474, "n": "CODECAN", "v": 23.5, "pct": 3.1}]}, {"mes": 5, "total": 672.6, "top": [{"l": "EMP", "c": 485, "n": "FONDO DE EMPLEADOS DE KPMG - KDEFON", "v": 68.7, "pct": 10.2}, {"l": "EMP", "c": 1265, "n": "COOPERATIVA MULTIACTIVA SOMOS", "v": 24.1, "pct": 3.6}, {"l": "EMP", "c": 2099, "n": "TELEPERFORMANCE COLOMBIA SAS", "v": 22.3, "pct": 3.3}]}, {"mes": 6, "total": 2543.7, "top": [{"l": "EMP", "c": 2338, "n": "FONDAVIVIENDA FONDO EMPLEADOS DAVIVIENDA", "v": 998.6, "pct": 39.3}, {"l": "EMP", "c": 1347, "n": "FONDO DE EMPLEADOS DE SEGUROS BOLIVAR  ADEBOL", "v": 471.4, "pct": 18.5}, {"l": "EMP", "c": 260, "n": "FONDO UNIANDES UNIVERSIDAD DE LOS ANDES", "v": 63.4, "pct": 2.5}]}, {"mes": 7, "total": 1128.6, "top": [{"l": "EMP", "c": 2042, "n": "FEMPHA FONDO DE EMPLEADOS", "v": 146.1, "pct": 12.9}, {"l": "IND", "c": 1600, "n": "LAPSOFT SAS", "v": 81.7, "pct": 7.2}, {"l": "IND", "c": 2055, "n": "FUNERARIA GARAGOA2055", "v": 43.5, "pct": 3.9}]}, {"mes": 8, "total": 1152.6, "top": [{"l": "EMP", "c": 1520, "n": "FONDO EMPLEADOS DE CENCOSUD COLOMBIA", "v": 115.7, "pct": 10.0}, {"l": "EMP", "c": 1904, "n": "COOINDEGABO", "v": 104.2, "pct": 9.0}, {"l": "EMP", "c": 2079, "n": "FONDO DE EMPLEADOS LAFAYETTE   FEL II", "v": 66.6, "pct": 5.8}]}, {"mes": 9, "total": 910.3, "top": [{"l": "EMP", "c": 1631, "n": "SINTRAFINDETER", "v": 86.1, "pct": 9.5}, {"l": "EMP", "c": 2079, "n": "FONDO DE EMPLEADOS LAFAYETTE   FEL II", "v": 66.6, "pct": 7.3}, {"l": "EMP", "c": 1196, "n": "FECOSBA - FONDO DE EMPLEADOS BARTOLINOS", "v": 38.2, "pct": 4.2}]}]}, "stl": {"TOT": {"atipicos": [{"mes": "2016-11", "z": 4.31, "valor": 836.5}, {"mes": "2018-07", "z": -7.73, "valor": 681.4}, {"mes": "2020-11", "z": -3.09, "valor": 505.4}, {"mes": "2021-07", "z": 5.25, "valor": 1596.6}, {"mes": "2022-09", "z": -3.73, "valor": 582.1}, {"mes": "2024-08", "z": -4.09, "valor": 761.7}, {"mes": "2025-08", "z": -10.23, "valor": 553.5}, {"mes": "2026-01", "z": -11.85, "valor": 823.2}, {"mes": "2026-02", "z": 13.39, "valor": 1707.3}, {"mes": "2026-06", "z": 10.54, "valor": 2543.7}, {"mes": "2026-09", "z": -7.97, "valor": 910.3}], "f_estac": 0.592, "f_tend": 0.519}, "EMP": {"atipicos": [{"mes": "2016-11", "z": 4.76, "valor": 804.9}, {"mes": "2018-07", "z": -7.99, "valor": 610.2}, {"mes": "2019-12", "z": 3.42, "valor": 795.8}, {"mes": "2020-11", "z": -3.92, "valor": 416.7}, {"mes": "2021-07", "z": 4.85, "valor": 1429.8}, {"mes": "2022-07", "z": -3.56, "valor": 683.4}, {"mes": "2022-09", "z": -3.47, "valor": 536.1}, {"mes": "2025-08", "z": -4.91, "valor": 435.6}, {"mes": "2026-01", "z": -11.92, "valor": 696.5}, {"mes": "2026-02", "z": 12.81, "valor": 1634.3}, {"mes": "2026-06", "z": 10.38, "valor": 2341.5}, {"mes": "2026-08", "z": 6.84, "valor": 983.6}, {"mes": "2026-09", "z": -7.73, "valor": 849.2}], "f_estac": 0.594, "f_tend": 0.492}, "IND": {"atipicos": [{"mes": "2016-02", "z": -10.82, "valor": 14.9}, {"mes": "2017-08", "z": 3.51, "valor": 69.7}, {"mes": "2017-11", "z": 3.68, "valor": 61.3}, {"mes": "2017-12", "z": 6.99, "valor": 205.5}, {"mes": "2018-12", "z": -4.34, "valor": 53.1}, {"mes": "2020-08", "z": 4.05, "valor": 131.2}, {"mes": "2023-03", "z": 7.35, "valor": 130.0}, {"mes": "2023-05", "z": 3.54, "valor": 76.8}, {"mes": "2024-01", "z": 5.48, "valor": 124.5}, {"mes": "2025-02", "z": -4.9, "valor": 35.8}, {"mes": "2025-09", "z": 3.27, "valor": 70.3}], "f_estac": 0.783, "f_tend": 0.608}, "TOT_sFV": {"atipicos": [{"mes": "2016-11", "z": 4.64, "valor": 836.3}, {"mes": "2022-09", "z": -3.8, "valor": 582.1}, {"mes": "2025-08", "z": -4.06, "valor": 553.5}, {"mes": "2026-01", "z": -11.39, "valor": 823.2}, {"mes": "2026-02", "z": 12.96, "valor": 1707.3}, {"mes": "2026-08", "z": 7.35, "valor": 1151.3}, {"mes": "2026-09", "z": -8.03, "valor": 908.6}], "f_estac": 0.584, "f_tend": 0.642}}, "cump": {"EMP": {"presu": [1602.13, 843.82, 668.97, 716.03, 761.19, 1181.05, 924.05, 1066.76, 950.52, 1060.19, 907.18, 1048.58], "real": [696.51, 1634.29, 785.9, 671.17, 614.48, 2341.54, 885.11, 983.58, 849.23], "real_sFV": [696.51, 1634.29, 785.9, 671.17, 614.48, 1342.92, 885.11, 983.58, 849.23], "cump_mes": [43.5, 193.7, 117.5, 93.7, 80.7, 198.3, 95.8, 92.2, 89.3], "cump_acum": [43.5, 95.3, 100.1, 98.9, 95.9, 116.8, 113.9, 110.9, 108.6], "cump_acum_sFV": [43.5, 95.3, 100.1, 98.9, 95.9, 99.5, 99.0, 98.1, 97.1], "presu_anual": 11730.5, "presu_js": 8714.5, "real_js": 9461.8, "real_js_sFV": 8463.2}, "IND": {"presu": [152.71, 69.71, 76.78, 87.19, 76.27, 172.61, 209.15, 158.42, 70.77, 120.12, 137.73, 79.32], "real": [126.71, 73.02, 86.28, 73.51, 58.1, 202.18, 243.45, 169.06, 61.09], "real_sFV": [126.71, 73.02, 86.28, 73.51, 58.1, 136.97, 234.38, 167.73, 59.4], "cump_mes": [83.0, 104.8, 112.4, 84.3, 76.2, 117.1, 116.4, 106.7, 86.3], "cump_acum": [83.0, 89.8, 95.6, 93.0, 90.3, 97.6, 102.2, 102.9, 101.8], "cump_acum_sFV": [83.0, 89.8, 95.6, 93.0, 90.3, 87.3, 93.4, 95.4, 94.6], "presu_anual": 1410.8, "presu_js": 1073.6, "real_js": 1093.4, "real_js_sFV": 1016.1}, "TOT": {"presu": [1755.19, 920.76, 746.09, 803.56, 837.8, 1354.01, 1133.55, 1225.53, 1021.63, 1180.68, 1045.28, 1128.26], "real": [823.22, 1707.31, 872.18, 744.67, 672.58, 2543.71, 1128.56, 1152.64, 910.32], "real_sFV": [823.22, 1707.31, 872.18, 744.67, 672.58, 1479.89, 1119.48, 1151.31, 908.63], "cump_mes": [46.9, 185.4, 116.9, 92.7, 80.3, 187.9, 99.6, 94.1, 89.1], "cump_acum": [46.9, 94.6, 99.4, 98.1, 95.2, 114.7, 112.5, 109.9, 107.7], "cump_acum_sFV": [46.9, 94.6, 99.4, 98.1, 95.2, 98.2, 98.3, 97.7, 96.7], "presu_anual": 13152.3, "presu_js": 9798.1, "real_js": 10555.2, "real_js_sFV": 9479.3}}, "reporte": {"ejecutivos": [{"id": "E01", "canal": "Canal", "meta": 1751.1, "real": 1661.7, "cump": 94.9, "real_sFV": 1661.7, "cump_sFV": 94.9, "fv": false, "meta_mes": [599.7, 64.4, 63.8, 67.9, 82.0, 472.1, 253.2, 71.8, 76.3], "real_mes": [601.1, 62.3, 59.2, 63.8, 63.8, 527.4, 226.5, 28.8, 28.8], "meta_anual": 2021.9}, {"id": "E02", "canal": "Ejecutivo", "meta": 1083.8, "real": 1069.0, "cump": 98.6, "real_sFV": 1069.0, "cump_sFV": 98.6, "fv": false, "meta_mes": [81.0, 86.1, 87.1, 86.5, 86.6, 89.5, 92.9, 193.6, 280.5], "real_mes": [100.4, 101.0, 124.4, 69.8, 120.1, 74.6, 100.0, 192.3, 186.4], "meta_anual": 1491.6}, {"id": "E03", "canal": "Ejecutivo", "meta": 1011.3, "real": 996.1, "cump": 98.5, "real_sFV": 996.1, "cump_sFV": 98.5, "fv": false, "meta_mes": [86.6, 96.8, 85.0, 85.8, 91.6, 135.9, 113.5, 226.1, 90.0], "real_mes": [88.5, 102.8, 90.1, 87.2, 98.3, 102.1, 120.6, 217.1, 89.3], "meta_anual": 1444.2}, {"id": "E04", "canal": "Ejecutivo", "meta": 748.3, "real": 768.7, "cump": 102.7, "real_sFV": 768.7, "cump_sFV": 102.7, "fv": false, "meta_mes": [207.0, 51.3, 69.4, 66.3, 72.3, 102.6, 79.7, 50.3, 49.3], "real_mes": [210.0, 51.5, 75.3, 69.4, 101.8, 75.8, 83.5, 49.6, 51.7], "meta_anual": 947.8}, {"id": "E05", "canal": "Ejecutivo", "meta": 741.7, "real": 765.2, "cump": 103.2, "real_sFV": 765.2, "cump_sFV": 103.2, "fv": false, "meta_mes": [131.0, 67.8, 75.2, 80.5, 68.8, 99.6, 76.6, 70.2, 72.0], "real_mes": [126.6, 113.1, 69.5, 79.5, 61.7, 90.0, 89.3, 60.8, 74.6], "meta_anual": 1177.8}, {"id": "E06", "canal": "Ejecutivo", "meta": 723.0, "real": 750.2, "cump": 103.8, "real_sFV": 750.2, "cump_sFV": 103.8, "fv": false, "meta_mes": [92.9, 47.3, 48.4, 61.6, 147.3, 65.5, 86.2, 81.9, 91.9], "real_mes": [94.7, 48.4, 47.9, 64.3, 147.9, 69.2, 85.6, 95.2, 97.0], "meta_anual": 939.9}, {"id": "E07", "canal": "Ejecutivo", "meta": 715.9, "real": 1736.6, "cump": 242.6, "real_sFV": 738.0, "cump_sFV": 103.1, "fv": true, "meta_mes": [325.5, 143.6, 29.7, 47.6, 56.5, 27.5, 27.8, 26.8, 30.9], "real_mes": [449.2, 24.2, 24.8, 43.1, 47.4, 1079.3, 25.8, 17.3, 25.6], "meta_anual": 1135.0}, {"id": "E08", "canal": "Ejecutivo", "meta": 657.5, "real": 607.6, "cump": 92.4, "real_sFV": 607.6, "cump_sFV": 92.4, "fv": false, "meta_mes": [28.0, 85.9, 37.7, 53.4, 45.7, 67.8, 73.1, 136.2, 129.7], "real_mes": [30.5, 86.0, 31.0, 34.2, 60.8, 64.5, 73.7, 84.9, 142.0], "meta_anual": 802.8}, {"id": "E09", "canal": "Ejecutivo", "meta": 351.0, "real": 378.7, "cump": 107.9, "real_sFV": 378.7, "cump_sFV": 107.9, "fv": false, "meta_mes": [45.0, 40.9, 42.0, 43.7, 30.0, 39.1, 52.4, 29.1, 28.7], "real_mes": [59.3, 39.6, 36.1, 46.9, 38.7, 33.9, 52.2, 34.7, 37.2], "meta_anual": 573.3}, {"id": "E10", "canal": "Ejecutivo", "meta": 301.6, "real": 276.0, "cump": 91.5, "real_sFV": 276.0, "cump_sFV": 91.5, "fv": false, "meta_mes": [21.5, 23.9, 27.2, 47.7, 24.0, 73.1, 31.0, 26.6, 26.6], "real_mes": [11.6, 29.7, 15.6, 45.4, 21.8, 74.8, 26.8, 24.0, 26.2], "meta_anual": 390.8}, {"id": "E11", "canal": "Ejecutivo", "meta": 296.1, "real": 191.0, "cump": 64.5, "real_sFV": 191.0, "cump_sFV": 64.5, "fv": false, "meta_mes": [32.4, 32.4, 32.4, 32.4, 32.4, 32.5, 32.5, 34.3, 34.7], "real_mes": [17.6, 20.7, 34.1, 6.1, 19.2, 19.3, 19.3, 20.1, 34.7], "meta_anual": 398.8}, {"id": "E12", "canal": "Ejecutivo", "meta": 260.2, "real": 255.9, "cump": 98.4, "real_sFV": 255.9, "cump_sFV": 98.4, "fv": false, "meta_mes": [22.0, 14.4, 14.6, 42.7, 15.6, 43.6, 74.3, 17.2, 15.8], "real_mes": [10.1, 15.8, 19.2, 39.4, 16.4, 22.3, 103.3, 14.3, 15.2], "meta_anual": 335.6}, {"id": "E13", "canal": "Ejecutivo", "meta": 259.3, "real": 302.5, "cump": 116.6, "real_sFV": 302.5, "cump_sFV": 116.6, "fv": false, "meta_mes": [24.1, 61.9, 32.5, 25.4, 20.8, 20.9, 25.5, 27.1, 21.1], "real_mes": [21.2, 23.4, 44.3, 27.7, 37.4, 34.2, 36.8, 46.8, 30.7], "meta_anual": 329.1}, {"id": "E14", "canal": "Ejecutivo", "meta": 232.3, "real": 228.3, "cump": 98.3, "real_sFV": 228.3, "cump_sFV": 98.3, "fv": false, "meta_mes": [15.0, 37.6, 43.0, 16.8, 16.9, 25.8, 17.4, 37.3, 22.4], "real_mes": [13.9, 39.9, 30.8, 15.7, 15.0, 32.2, 15.7, 41.9, 23.1], "meta_anual": 346.6}, {"id": "E15", "canal": "Canal", "meta": 130.4, "real": 141.0, "cump": 108.1, "real_sFV": 141.0, "cump_sFV": 108.1, "fv": false, "meta_mes": [7.6, 24.2, 22.6, 10.6, 12.8, 16.7, 18.6, 3.6, 13.9], "real_mes": [14.2, 27.2, 3.2, 26.8, 9.5, 8.4, 13.9, 13.8, 24.0], "meta_anual": 172.0}, {"id": "E16", "canal": "Canal", "meta": 117.7, "real": 112.9, "cump": 95.9, "real_sFV": 112.9, "cump_sFV": 95.9, "fv": false, "meta_mes": [12.9, 12.7, 12.7, 12.0, 12.0, 19.2, 12.0, 12.0, 12.0], "real_mes": [10.6, 10.7, 10.7, 10.6, 19.8, 12.0, 12.0, 12.0, 14.4], "meta_anual": 154.7}, {"id": "E17", "canal": "Ejecutivo", "meta": 98.8, "real": 105.3, "cump": 106.6, "real_sFV": 105.3, "cump_sFV": 106.6, "fv": false, "meta_mes": [0.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.0, 98.0, 0.0], "real_mes": [0.0, 0.0, 0.9, 0.2, 0.0, 0.1, 0.0, 104.2, 0.0], "meta_anual": 99.2}, {"id": "E18", "canal": "Ejecutivo", "meta": 94.9, "real": 108.4, "cump": 114.3, "real_sFV": 108.4, "cump_sFV": 114.3, "fv": false, "meta_mes": [7.9, 7.7, 7.8, 7.7, 7.3, 7.3, 7.3, 34.4, 7.6], "real_mes": [7.7, 7.8, 7.8, 7.9, 7.8, 8.0, 8.0, 43.3, 10.1], "meta_anual": 118.3}, {"id": "E19", "canal": "Ejecutivo", "meta": 88.9, "real": 56.1, "cump": 63.0, "real_sFV": 56.1, "cump_sFV": 63.0, "fv": false, "meta_mes": [0.1, 6.9, 0.3, 0.0, 0.2, 0.7, 44.7, 33.7, 2.3], "real_mes": [0.0, 8.1, 0.0, 0.1, 0.2, 0.0, 44.5, 0.0, 3.1], "meta_anual": 90.1}, {"id": "E20", "canal": "Ejecutivo", "meta": 66.4, "real": 68.2, "cump": 102.7, "real_sFV": 68.2, "cump_sFV": 102.7, "fv": false, "meta_mes": [7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.2, 7.7, 8.3], "real_mes": [5.4, 10.1, 7.7, 5.3, 10.9, 7.8, 7.7, 8.0, 5.3], "meta_anual": 91.6}, {"id": "E21", "canal": "Canal", "meta": 26.2, "real": 27.4, "cump": 104.8, "real_sFV": 27.4, "cump_sFV": 104.8, "fv": false, "meta_mes": [3.0, 3.0, 2.9, 2.9, 2.9, 2.8, 2.9, 2.9, 2.9], "real_mes": [3.0, 3.0, 3.0, 3.1, 3.1, 3.1, 3.0, 3.0, 3.0], "meta_anual": 35.3}, {"id": "E22", "canal": "Canal", "meta": 22.1, "real": 21.6, "cump": 97.9, "real_sFV": 21.6, "cump_sFV": 97.9, "fv": false, "meta_mes": [2.4, 2.4, 2.4, 2.4, 2.5, 2.5, 2.5, 2.5, 2.5], "real_mes": [2.4, 2.4, 2.4, 2.4, 2.4, 2.4, 2.4, 2.4, 2.4], "meta_anual": 29.6}, {"id": "E23", "canal": "Ejecutivo", "meta": 16.5, "real": 6.7, "cump": 40.5, "real_sFV": 6.7, "cump_sFV": 40.5, "fv": false, "meta_mes": [1.7, 1.8, 1.8, 1.8, 1.8, 1.8, 1.8, 1.8, 1.8], "real_mes": [1.6, 1.6, 1.8, 1.8, 0.0, 0.0, 0.0, 0.0, 0.0], "meta_anual": 22.1}], "real_mes": [1879.5, 829.3, 739.8, 750.6, 904.1, 2341.3, 1150.8, 1114.7, 925.0], "meta": 9795.0, "real": 10635.1, "cump": 108.6, "cump_sFV": 98.4, "wape": 15.9, "wape_sFV": 5.7, "mediana_cump": 98.6, "n_sobre": 11, "n_bajo70": 3, "n": 23}, "eval_dev": [{"serie": "EMP", "modelo": "ETS(A,Ad,A) log", "MAE": 107.1531, "RMSE": 165.3321, "MASE": 1.0531, "C80": 0.8384, "C95": 0.8963, "n": 588, "APE12": 7.7971, "sesgo12": -6.3525, "n12": 49}, {"serie": "EMP", "modelo": "Estacional ingenuo", "MAE": 96.2982, "RMSE": 147.1257, "MASE": 0.9481, "C80": 0.932, "C95": 0.9507, "n": 588, "APE12": 6.3196, "sesgo12": -4.2978, "n12": 49}, {"serie": "EMP", "modelo": "Método actual (replicado)", "MAE": 96.4658, "RMSE": 160.2259, "MASE": 0.9471, "C80": NaN, "C95": NaN, "n": 588, "APE12": 8.2852, "sesgo12": -0.2079, "n12": 49}, {"serie": "EMP", "modelo": "SARIMA (0,1,1)(0,1,1)12 log", "MAE": 86.6001, "RMSE": 147.4966, "MASE": 0.8521, "C80": 0.9439, "C95": 0.9728, "n": 588, "APE12": 5.8423, "sesgo12": 0.1554, "n12": 49}, {"serie": "IND", "modelo": "ETS(A,Ad,A) log", "MAE": 15.3787, "RMSE": 24.171, "MASE": 1.0644, "C80": 0.8367, "C95": 0.9133, "n": 588, "APE12": 10.1671, "sesgo12": -8.4247, "n12": 49}, {"serie": "IND", "modelo": "Estacional ingenuo", "MAE": 15.611, "RMSE": 24.5276, "MASE": 1.0797, "C80": 0.9082, "C95": 0.9218, "n": 588, "APE12": 8.9324, "sesgo12": -8.292, "n12": 49}, {"serie": "IND", "modelo": "Método actual (replicado)", "MAE": 16.6527, "RMSE": 25.7222, "MASE": 1.149, "C80": NaN, "C95": NaN, "n": 588, "APE12": 8.1235, "sesgo12": 2.1585, "n12": 49}, {"serie": "IND", "modelo": "SARIMA (0,1,1)(0,1,1)12 log", "MAE": 14.9098, "RMSE": 23.0993, "MASE": 1.031, "C80": 0.9082, "C95": 0.9524, "n": 588, "APE12": 6.7663, "sesgo12": -0.5243, "n12": 49}, {"serie": "TOT", "modelo": "ETS(A,Ad,A) log", "MAE": 118.3048, "RMSE": 178.882, "MASE": 1.1814, "C80": 0.7721, "C95": 0.8503, "n": 588, "APE12": 8.0121, "sesgo12": -6.9358, "n12": 49}, {"serie": "TOT", "modelo": "Estacional ingenuo", "MAE": 99.722, "RMSE": 153.8211, "MASE": 1.0003, "C80": 0.9269, "C95": 0.9507, "n": 588, "APE12": 6.2073, "sesgo12": -4.6877, "n12": 49}, {"serie": "TOT", "modelo": "Método actual (replicado)", "MAE": 98.7083, "RMSE": 166.8446, "MASE": 0.9864, "C80": NaN, "C95": NaN, "n": 588, "APE12": 7.6659, "sesgo12": -0.0591, "n12": 49}, {"serie": "TOT", "modelo": "SARIMA (0,1,1)(0,1,1)12 log", "MAE": 90.28, "RMSE": 152.3109, "MASE": 0.9045, "C80": 0.9371, "C95": 0.9728, "n": 588, "APE12": 5.1396, "sesgo12": -0.3355, "n12": 49}, {"serie": "TOT_sFV", "modelo": "ETS(A,Ad,A) log", "MAE": 79.1059, "RMSE": 107.3739, "MASE": 0.9656, "C80": 0.7908, "C95": 0.9218, "n": 588, "APE12": 6.0457, "sesgo12": -6.0457, "n12": 49}, {"serie": "TOT_sFV", "modelo": "Estacional ingenuo", "MAE": 78.8387, "RMSE": 96.5196, "MASE": 0.9644, "C80": 0.8129, "C95": 0.9694, "n": 588, "APE12": 6.3221, "sesgo12": -6.3221, "n12": 49}, {"serie": "TOT_sFV", "modelo": "Método actual (replicado)", "MAE": 65.1994, "RMSE": 81.9499, "MASE": 0.7967, "C80": NaN, "C95": NaN, "n": 588, "APE12": 2.407, "sesgo12": -1.3774, "n12": 49}, {"serie": "TOT_sFV", "modelo": "SARIMA (0,1,1)(0,1,1)12 log", "MAE": 66.7699, "RMSE": 85.6689, "MASE": 0.8159, "C80": 0.9337, "C95": 0.9847, "n": 588, "APE12": 2.5202, "sesgo12": -1.7799, "n12": 49}], "eval_test": [{"serie": "EMP", "modelo": "ETS(A,Ad,A) log", "MAE": 325.2496, "RMSE": 499.4754, "MASE": 3.1697, "C80": 0.5591, "C95": 0.6452, "n": 186, "APE12": 8.2103, "sesgo12": -7.1691, "n12": 10}, {"serie": "EMP", "modelo": "Estacional ingenuo", "MAE": 311.288, "RMSE": 493.9044, "MASE": 3.0293, "C80": 0.5269, "C95": 0.6828, "n": 186, "APE12": 9.7666, "sesgo12": -9.1602, "n12": 10}, {"serie": "EMP", "modelo": "Método actual (replicado)", "MAE": 316.6889, "RMSE": 495.2711, "MASE": 3.0732, "C80": NaN, "C95": NaN, "n": 186, "APE12": 7.2245, "sesgo12": -0.7376, "n12": 10}, {"serie": "EMP", "modelo": "SARIMA (0,1,1)(0,1,1)12 log", "MAE": 323.1436, "RMSE": 493.6161, "MASE": 3.1442, "C80": 0.6344, "C95": 0.6398, "n": 186, "APE12": 5.877, "sesgo12": -3.9888, "n12": 10}, {"serie": "IND", "modelo": "ETS(A,Ad,A) log", "MAE": 19.9094, "RMSE": 29.4932, "MASE": 1.2973, "C80": 0.7849, "C95": 0.9194, "n": 186, "APE12": 15.3529, "sesgo12": -15.3529, "n12": 10}, {"serie": "IND", "modelo": "Estacional ingenuo", "MAE": 21.4104, "RMSE": 31.6592, "MASE": 1.3939, "C80": 0.7688, "C95": 0.8548, "n": 186, "APE12": 15.3957, "sesgo12": -15.3957, "n12": 10}, {"serie": "IND", "modelo": "Método actual (replicado)", "MAE": 19.9729, "RMSE": 27.0572, "MASE": 1.2997, "C80": NaN, "C95": NaN, "n": 186, "APE12": 9.1135, "sesgo12": -9.1135, "n12": 10}, {"serie": "IND", "modelo": "SARIMA (0,1,1)(0,1,1)12 log", "MAE": 18.4496, "RMSE": 27.171, "MASE": 1.2019, "C80": 0.7957, "C95": 0.9462, "n": 186, "APE12": 9.9786, "sesgo12": -9.9786, "n12": 10}, {"serie": "TOT", "modelo": "ETS(A,Ad,A) log", "MAE": 341.0061, "RMSE": 521.7613, "MASE": 3.2652, "C80": 0.5376, "C95": 0.6398, "n": 186, "APE12": 8.223, "sesgo12": -7.3105, "n12": 10}, {"serie": "TOT", "modelo": "Estacional ingenuo", "MAE": 329.1388, "RMSE": 518.8232, "MASE": 3.1451, "C80": 0.5215, "C95": 0.6828, "n": 186, "APE12": 10.0896, "sesgo12": -9.7999, "n12": 10}, {"serie": "TOT", "modelo": "Método actual (replicado)", "MAE": 329.3944, "RMSE": 516.8091, "MASE": 3.1368, "C80": NaN, "C95": NaN, "n": 186, "APE12": 6.197, "sesgo12": -1.6379, "n12": 10}, {"serie": "TOT", "modelo": "SARIMA (0,1,1)(0,1,1)12 log", "MAE": 338.7614, "RMSE": 516.0659, "MASE": 3.2379, "C80": 0.5914, "C95": 0.6344, "n": 186, "APE12": 6.2965, "sesgo12": -4.8617, "n12": 10}, {"serie": "TOT_sFV", "modelo": "ETS(A,Ad,A) log", "MAE": 267.4062, "RMSE": 404.6503, "MASE": 3.0561, "C80": 0.5591, "C95": 0.6989, "n": 186, "APE12": 3.8228, "sesgo12": -2.4058, "n12": 10}, {"serie": "TOT_sFV", "modelo": "Estacional ingenuo", "MAE": 259.9427, "RMSE": 395.9266, "MASE": 2.9698, "C80": 0.4677, "C95": 0.6075, "n": 186, "APE12": 7.2448, "sesgo12": -6.9551, "n12": 10}, {"serie": "TOT_sFV", "modelo": "Método actual (replicado)", "MAE": 259.2288, "RMSE": 404.5961, "MASE": 2.9515, "C80": NaN, "C95": NaN, "n": 186, "APE12": 3.2904, "sesgo12": 1.4402, "n12": 10}, {"serie": "TOT_sFV", "modelo": "SARIMA (0,1,1)(0,1,1)12 log", "MAE": 266.1431, "RMSE": 406.9872, "MASE": 3.035, "C80": 0.6935, "C95": 0.6989, "n": 186, "APE12": 3.0157, "sesgo12": -0.016, "n12": 10}], "mase_h": {"TOT|Estacional ingenuo": [0.97, 0.961, 0.961, 0.965, 0.962, 0.956, 0.986, 0.997, 1.056, 1.06, 1.041, 1.088], "TOT|Método actual (replicado)": [0.926, 0.91, 0.92, 0.949, 0.975, 0.972, 0.974, 1.031, 1.017, 1.03, 1.048, 1.083], "TOT|ETS(A,Ad,A) log": [1.27, 1.154, 1.147, 1.187, 1.182, 1.156, 1.096, 1.176, 1.224, 1.248, 1.167, 1.17], "TOT|SARIMA (0,1,1)(0,1,1)12 log": [0.903, 0.878, 0.866, 0.883, 0.87, 0.864, 0.872, 0.908, 0.952, 0.954, 0.947, 0.957], "TOT_sFV|Estacional ingenuo": [0.914, 0.903, 0.902, 0.91, 0.908, 0.903, 0.934, 0.969, 1.048, 1.054, 1.033, 1.095], "TOT_sFV|Método actual (replicado)": [0.741, 0.75, 0.748, 0.746, 0.744, 0.716, 0.722, 0.811, 0.862, 0.89, 0.897, 0.934], "TOT_sFV|ETS(A,Ad,A) log": [0.972, 0.888, 0.899, 0.887, 0.865, 0.887, 0.916, 0.977, 1.06, 1.105, 1.018, 1.114], "TOT_sFV|SARIMA (0,1,1)(0,1,1)12 log": [0.793, 0.803, 0.806, 0.743, 0.719, 0.742, 0.757, 0.798, 0.891, 0.882, 0.898, 0.958], "EMP|Estacional ingenuo": [0.914, 0.908, 0.919, 0.926, 0.925, 0.918, 0.94, 0.951, 0.999, 0.995, 0.972, 1.01], "EMP|Método actual (replicado)": [0.878, 0.893, 0.882, 0.913, 0.921, 0.919, 0.928, 0.99, 0.973, 0.994, 1.025, 1.049], "EMP|ETS(A,Ad,A) log": [1.067, 0.997, 0.987, 1.017, 1.024, 1.011, 1.036, 1.059, 1.103, 1.1, 1.109, 1.126], "EMP|SARIMA (0,1,1)(0,1,1)12 log": [0.842, 0.837, 0.827, 0.836, 0.819, 0.813, 0.82, 0.867, 0.887, 0.894, 0.89, 0.894], "IND|Estacional ingenuo": [0.995, 1.0, 1.08, 1.09, 1.1, 1.105, 1.123, 1.122, 1.049, 1.074, 1.107, 1.112], "IND|Método actual (replicado)": [1.106, 1.104, 1.185, 1.189, 1.231, 1.167, 1.132, 1.157, 1.101, 1.092, 1.163, 1.163], "IND|ETS(A,Ad,A) log": [0.996, 0.963, 1.015, 1.021, 1.05, 1.084, 1.114, 1.145, 1.071, 1.099, 1.106, 1.108], "IND|SARIMA (0,1,1)(0,1,1)12 log": [1.007, 1.001, 1.047, 1.06, 1.1, 1.032, 1.014, 1.023, 0.994, 0.967, 1.033, 1.095]}, "diag": {"TOT": {"nivel_log": {"adf_p": 0.9698, "kpss_p": 0.01}, "dif_estacional": {"adf_p": 0.0, "kpss_p": 0.1}, "dif_reg_estac": {"adf_p": 0.0, "kpss_p": 0.1}, "boxcox_lambda": -0.697, "ljung12_p": 0.8651, "ljung24_p": 0.987, "theta": -0.958, "Theta": -0.259, "aic": -59.7}, "TOT_sFV": {"nivel_log": {"adf_p": 0.9088, "kpss_p": 0.01}, "dif_estacional": {"adf_p": 0.0434, "kpss_p": 0.1}, "dif_reg_estac": {"adf_p": 0.0, "kpss_p": 0.1}, "boxcox_lambda": -0.653, "ljung12_p": 0.3193, "ljung24_p": 0.8369, "theta": -0.994, "Theta": -0.113, "aic": -94.7}, "EMP": {"nivel_log": {"adf_p": 0.9466, "kpss_p": 0.01}, "dif_estacional": {"adf_p": 0.0, "kpss_p": 0.1}, "dif_reg_estac": {"adf_p": 0.0, "kpss_p": 0.1}, "boxcox_lambda": -0.575, "ljung12_p": 0.9295, "ljung24_p": 0.991, "theta": -0.961, "Theta": -0.199, "aic": -35.2}, "IND": {"nivel_log": {"adf_p": 0.9086, "kpss_p": 0.01}, "dif_estacional": {"adf_p": 0.0048, "kpss_p": 0.1}, "dif_reg_estac": {"adf_p": 0.0018, "kpss_p": 0.0474}, "boxcox_lambda": -0.277, "ljung12_p": 0.9379, "ljung24_p": 0.8213, "theta": -0.996, "Theta": -0.321, "aic": 46.1}}, "fc": {"TOT_sFV": {"media": [1169.18, 772.58, 1385.29, 1028.12, 1611.02, 927.53, 820.51, 747.82, 1573.59, 1237.94, 1132.3, 1068.48, 1269.59, 839.55, 1503.71], "mediana": [1149.05, 758.73, 1363.4, 1014.18, 1581.78, 911.81, 803.72, 736.06, 1550.79, 1216.87, 1113.02, 1047.91, 1233.2, 818.47, 1464.62], "p10": [908.68, 598.73, 1063.13, 797.43, 1249.66, 720.23, 636.86, 578.58, 1218.66, 951.59, 877.15, 830.98, 912.88, 602.2, 1069.98], "p90": [1456.94, 960.64, 1729.06, 1275.0, 2008.48, 1147.23, 1023.84, 930.65, 1969.51, 1550.99, 1413.46, 1333.35, 1675.33, 1103.24, 1997.31], "p2_5": [800.03, 529.09, 946.61, 701.89, 1089.28, 633.88, 565.48, 507.2, 1070.85, 842.14, 777.51, 731.54, 779.14, 511.84, 899.44], "p97_5": [1663.1, 1098.85, 1946.5, 1452.5, 2254.48, 1313.55, 1161.5, 1047.88, 2218.86, 1760.75, 1598.62, 1506.14, 1956.61, 1295.85, 2319.46], "oct_dic": {"mediana": 3302.0, "p10": 2858.6, "p90": 3828.4, "p2_5": 2656.9, "p97_5": 4148.2}, "anio2027": {"mediana": 13733.8, "p10": 12639.6, "p90": 14884.7, "p2_5": 12131.7, "p97_5": 15582.2}, "paths_anual": null}, "EMP_sFV": {"media": [1065.44, 675.1, 1293.08, 855.13, 1602.07, 842.75, 741.27, 683.22, 1441.91, 981.32, 983.34, 987.53, 1164.8, 736.64, 1409.54], "mediana": [1043.44, 660.13, 1267.55, 840.77, 1567.27, 825.71, 722.97, 670.11, 1415.4, 960.29, 962.63, 964.27, 1120.89, 712.55, 1361.55], "p10": [800.43, 508.12, 960.89, 643.83, 1205.3, 634.08, 557.86, 513.1, 1083.58, 730.81, 739.37, 744.8, 786.23, 503.23, 953.96], "p90": [1358.0, 857.93, 1649.62, 1083.98, 2042.98, 1066.03, 946.25, 869.19, 1844.63, 1257.79, 1254.28, 1260.36, 1594.23, 999.39, 1933.18], "p2_5": [693.56, 442.96, 844.2, 559.54, 1035.41, 550.94, 488.43, 442.91, 937.77, 637.94, 646.29, 646.6, 658.32, 417.48, 781.12], "p97_5": [1563.53, 995.6, 1883.24, 1251.57, 2325.06, 1237.08, 1086.78, 991.61, 2109.44, 1449.42, 1438.02, 1444.39, 1922.17, 1198.02, 2289.31], "oct_dic": {"mediana": 3005.8, "p10": 2563.8, "p90": 3536.4, "p2_5": 2379.8, "p97_5": 3846.1}, "anio2027": {"mediana": 12409.5, "p10": 11288.1, "p90": 13622.8, "p2_5": 10760.2, "p97_5": 14323.1}, "paths_anual": null}, "IND_sFV": {"media": [103.57, 102.69, 110.81, 146.22, 69.6, 96.58, 82.2, 65.57, 152.02, 264.72, 175.94, 69.67, 115.18, 113.88, 122.66], "mediana": [99.53, 98.46, 106.72, 140.67, 66.65, 92.71, 78.79, 63.28, 146.82, 254.16, 168.84, 66.76, 108.98, 107.6, 116.26], "p10": [69.25, 68.72, 73.12, 97.92, 46.56, 64.38, 54.86, 43.59, 101.3, 175.81, 117.42, 46.74, 69.68, 70.17, 74.06], "p90": [142.72, 142.16, 153.22, 199.94, 96.66, 132.57, 114.1, 90.54, 209.93, 367.84, 243.95, 96.2, 168.02, 165.41, 180.08], "p2_5": [56.48, 57.03, 61.24, 80.79, 38.06, 53.36, 45.23, 35.68, 84.07, 144.75, 98.07, 38.26, 55.73, 55.35, 57.75], "p97_5": [173.09, 173.38, 183.58, 245.62, 115.42, 162.62, 136.74, 108.92, 254.26, 446.62, 294.63, 115.99, 212.35, 208.48, 223.06], "oct_dic": {"mediana": 312.1, "p10": 252.0, "p90": 388.1, "p2_5": 227.7, "p97_5": 433.6}, "anio2027": {"mediana": 1463.9, "p10": 1290.4, "p90": 1671.1, "p2_5": 1212.8, "p97_5": 1784.0}, "paths_anual": null}, "TOT": {"media": [1168.06, 781.65, 1356.67, 1104.42, 1490.84, 914.41, 823.62, 758.9, 2296.76, 1254.03, 1086.15, 1105.32, 1263.24, 846.29, 1466.67], "mediana": [1142.01, 763.33, 1328.22, 1084.6, 1455.84, 894.19, 802.35, 743.3, 2251.55, 1225.64, 1061.97, 1078.56, 1221.07, 821.16, 1418.61], "p10": [872.03, 582.16, 998.88, 823.3, 1111.83, 682.38, 615.07, 564.23, 1710.89, 924.44, 809.06, 826.64, 878.29, 586.8, 1004.52], "p90": [1497.82, 1000.27, 1743.16, 1409.06, 1912.37, 1163.16, 1057.51, 972.09, 2958.67, 1618.07, 1395.73, 1420.12, 1698.93, 1135.21, 1993.53], "p2_5": [754.86, 505.44, 874.68, 711.58, 950.44, 590.11, 536.58, 486.13, 1473.75, 804.31, 705.06, 715.66, 735.56, 491.55, 832.31], "p97_5": [1744.68, 1166.1, 1997.13, 1635.78, 2182.05, 1358.88, 1223.07, 1113.33, 3394.11, 1868.65, 1606.76, 1633.38, 2017.85, 1347.58, 2346.66], "oct_dic": {"mediana": 3272.0, "p10": 2776.8, "p90": 3872.0, "p2_5": 2552.9, "p97_5": 4248.9}, "anio2027": {"mediana": 14372.1, "p10": 13087.7, "p90": 15752.9, "p2_5": 12452.2, "p97_5": 16618.0}, "paths_anual": null}, "TOT_sFV_ETS": {"mediana": [1142.73, 782.69, 1276.44, 1203.02, 1314.21, 887.55, 818.97, 773.83, 1489.28, 1239.82, 1021.49, 1124.97, 1221.18, 837.21, 1365.63], "anio2027": 13439.0}}, "fut": ["2026-10", "2026-11", "2026-12", "2027-01", "2027-02", "2027-03", "2027-04", "2027-05", "2027-06", "2027-07", "2027-08", "2027-09", "2027-10", "2027-11", "2027-12"], "cierre": {"TOT": {"real_js": 10555.2, "presu_anual": 13152.3, "presu_od": 3354.2, "od": [2656.9, 2858.6, 3302.0, 3828.4, 4148.2], "total": [13212.0, 13413.8, 13857.2, 14383.6, 14703.4], "cump": [100.5, 102.0, 105.4, 109.4, 111.8], "cump_sFV": [92.3, 93.8, 97.2, 101.2, 103.6], "p_cumple": 98.5, "p_cumple_sFV": 17.4}, "EMP": {"real_js": 9461.8, "presu_anual": 11730.5, "presu_od": 3015.9, "od": [2379.8, 2563.8, 3005.8, 3536.4, 3846.1], "total": [11841.6, 12025.6, 12467.6, 12998.2, 13307.9], "cump": [100.9, 102.5, 106.3, 110.8, 113.4], "cump_sFV": [92.4, 94.0, 97.8, 102.3, 104.9], "p_cumple": 99.0, "p_cumple_sFV": 25.6}, "IND": {"real_js": 1093.4, "presu_anual": 1410.8, "presu_od": 337.2, "od": [227.7, 252.0, 312.1, 388.1, 433.6], "total": [1321.1, 1345.4, 1405.5, 1481.5, 1527.0], "cump": [93.6, 95.4, 99.6, 105.0, 108.2], "cump_sFV": [88.2, 89.9, 94.1, 99.5, 102.8], "p_cumple": 46.1, "p_cumple_sFV": 8.5}}, "filas": {"2016": {"EMP": 569, "IND": 53}, "2017": {"EMP": 482, "IND": 59}, "2018": {"EMP": 451, "IND": 55}, "2019": {"EMP": 442, "IND": 60}, "2020": {"EMP": 413, "IND": 64}, "2021": {"EMP": 389, "IND": 65}, "2022": {"EMP": 386, "IND": 57}, "2023": {"EMP": 380, "IND": 57}, "2024": {"EMP": 383, "IND": 59}, "2025": {"EMP": 372, "IND": 60}, "2026": {"EMP": 356, "IND": 66}}, "base2026_sFV": 12781.3, "controles": ["22 hojas leídas (11 años × 2 libros); 129 meses por serie, de ene-2016 a sep-2026", "4.623 filas de datos en el libro empresarial y 655 en el individual", "859 y 154 números de contrato; 961 distintos en la unión; 52 presentes en ambos libros", "0 filas vacías y 0 valores negativos en las columnas D–O", "Columna P (total por contrato) = suma D–O en todas las filas donde existe (0 diferencias)", "Fila «TOTAL GENERAL» del libro empresarial = suma de las filas, mes a mes, en los 11 años (diferencia $0)", "Fila «TOTAL GENERAL» del libro individual está vacía: el total se reconstruye desde las filas", "Totales 2016–2025: $82.156.367.764 (empresarial) y $8.479.077.697 (individual), iguales al avance", "Conservación del total: la base larga suma exactamente lo mismo que las hojas de origen", "Procedencia por registro: libro, hoja (año) y fila de Excel", "Regla R5: no se fusionan ni eliminan filas por compartir número o nombre de contrato", "Presupuesto 2026: total general $13.152 M = empresarial $11.731 M + individual $1.411 M + $11,1 M sin desagregar por libro (se usa el total general para la línea)", "Reporte por ejecutivo: suma de 23 filas = $10.635 M real y $9.795 M meta (igual al avance)", "Nombres de asesores y ejecutivos seudonimizados en las salidas"], "objetivos": [{"n": 1, "t": "Base analítica reproducible", "antes": 90, "ahora": 100, "e": "Base larga con procedencia, 14 controles documentados y conciliación con diferencia $0; scripts reejecutables."}, {"n": 2, "t": "Caracterizar 2026 y fijar la regla de atípicos", "antes": 70, "ahora": 100, "e": "Tendencia, peso por mes, STL, atípicos por regla explícita, contratos que explican los picos y regla R7 escrita."}, {"n": 3, "t": "Cumplimiento 2026 a septiembre", "antes": 55, "ahora": 90, "e": "Cumplimiento mensual y acumulado por libro y total, por ejecutivo, con y sin el pago, y desviaciones explicadas por contrato."}, {"n": 4, "t": "Validar, seleccionar métodos y estimar el cierre 2026", "antes": 30, "ahora": 75, "e": "ADF, KPSS, Box-Cox, Ljung-Box; 4 métodos con origen móvil; prueba final; cierre esperado con intervalo."}, {"n": 5, "t": "Proyección mensual 2027 con escenarios", "antes": 5, "ahora": 65, "e": "12 meses con intervalos 80 % y 95 %, escenarios sin pago / con pago / esperado, componentes por libro."}], "avance_total": 86, "pendientes": ["Obj. 3 · Confirmar con la empresa por qué el reporte y los libros reparten distinto enero y febrero (fecha de pago vs. fecha de registro).", "Obj. 4 · Validación prospectiva con los datos reales de octubre–diciembre de 2026 cuando la empresa los entregue.", "Obj. 4 · Probar el modelado de intervenciones (Chen y Liu, 1993) para FONCEL, SOMEC y el corte de septiembre.", "Obj. 4 · Deflactar con el IPC mensual para reportar crecimiento real.", "Obj. 5 · Validar los escenarios y el mes del pago de Fondavivienda con la Dirección Comercial.", "Obj. 5 · Contrastar con la consolidación de las plantillas de los ejecutivos (desde el 20-oct-2026) y, si alcanza el tiempo, reconciliación jerárquica."], "generado": "18/10/2026"};
+</script>
+<script>
+/* ---------- utilidades ---------- */
+const MES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const C={s1:css('--s1'),s2:css('--s2'),s3:css('--s3'),s4:css('--s4'),muted:css('--muted'),ink2:css('--ink2'),line:css('--line'),good:css('--good'),crit:css('--crit')};
+const f0=x=>x==null?'—':Number(x).toLocaleString('es-CO',{maximumFractionDigits:0});
+const f1=x=>x==null||isNaN(x)?'—':Number(x).toLocaleString('es-CO',{minimumFractionDigits:1,maximumFractionDigits:1});
+const f2=x=>x==null||isNaN(x)?'—':Number(x).toLocaleString('es-CO',{minimumFractionDigits:2,maximumFractionDigits:2});
+const f3=x=>x==null||isNaN(x)?'—':Number(x).toLocaleString('es-CO',{minimumFractionDigits:3,maximumFractionDigits:3});
+const pct=x=>x==null||isNaN(x)?'—':f1(x)+' %';
+const $=id=>document.getElementById(id);
+const alpha=(hex,a)=>{const n=parseInt(hex.slice(1),16);return `rgba(${n>>16},${(n>>8)&255},${n&255},${a})`};
+function status(c){ // cumplimiento -> pill
+  if(c>=100) return `<span class="pill p-good">▲ ${pct(c)}</span>`;
+  if(c>=90) return `<span class="pill p-warn">● ${pct(c)}</span>`;
+  return `<span class="pill p-crit">▼ ${pct(c)}</span>`;
+}
+function table(el,head,rows,numCols=[]){
+  const nc=i=>numCols.includes(i)?' class="n"':'';
+  $(el).innerHTML='<thead><tr>'+head.map((h,i)=>`<th${nc(i)}>${h}</th>`).join('')+'</tr></thead><tbody>'+
+    rows.map(r=>{const cls=r._cls?` class="${r._cls}"`:'';const cells=r._cells||r;return `<tr${cls}>`+cells.map((c,i)=>`<td${nc(i)}>${c}</td>`).join('')+'</tr>'}).join('')+'</tbody>';
+}
+function seg(el,opts,cur,cb){
+  const box=$(el); box.innerHTML='';
+  opts.forEach(([v,l])=>{const b=document.createElement('button');b.type='button';b.textContent=l;b.setAttribute('aria-pressed',v===cur);
+    b.onclick=()=>{[...box.children].forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');cb(v)};box.appendChild(b)});
+}
+Chart.defaults.font.family="'Montserrat',sans-serif";Chart.defaults.font.size=11;Chart.defaults.color=C.ink2;
+Chart.defaults.plugins.legend.display=false;Chart.defaults.maintainAspectRatio=false;
+Chart.defaults.interaction={mode:'index',intersect:false};
+Chart.defaults.plugins.tooltip.callbacks.label=ctx=>`${ctx.dataset.label}: ${f1(ctx.parsed.y)}`;
+const grid={color:C.line,drawTicks:false},noGrid={display:false};
+const charts={};
+function mk(id,cfg){if(charts[id])charts[id].destroy();charts[id]=new Chart($(id),cfg);return charts[id]}
+
+/* ---------- pestañas ---------- */
+const TABS=[['resumen','Resumen'],['o1','1 · Base'],['o2','2 · Caracterización'],['o3','3 · Cumplimiento 2026'],['o4','4 · Validación y cierre'],['o5','5 · Proyección 2027'],['pend','Pendientes']];
+TABS.forEach(([k,l],i)=>{const b=document.createElement('button');b.role='tab';b.textContent=l;b.setAttribute('aria-selected',i===0);
+  b.onclick=()=>{document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected','false'));b.setAttribute('aria-selected','true');
+    document.querySelectorAll('section.tab').forEach(s=>s.classList.remove('on'));$('t-'+k).classList.add('on');
+    try{localStorage.setItem('exepaz-tab',k)}catch(e){} render(k)};$('tabs').appendChild(b)});
+
+/* ---------- RESUMEN ---------- */
+const CT=D.cump.TOT, CI=D.cierre.TOT, F=D.fc.TOT_sFV;
+function rResumen(){
+  const k=[
+    ['Cumplimiento a septiembre',pct(CT.cump_acum[8]),`Libros: ${f0(CT.real_js)} M$ de ${f0(CT.presu_js)} M$. Sin Fondavivienda: ${pct(CT.cump_acum_sFV[8])}`],
+    ['Cumplimiento esperado al cierre',pct(CI.cump[2]),`Intervalo 80 %: ${pct(CI.cump[1])} – ${pct(CI.cump[3])}. Probabilidad de cumplir: ${pct(CI.p_cumple)}`],
+    ['Recaudo base 2027',f0(F.anio2027.mediana)+' M$',`Sin pago extraordinario. Intervalo 80 %: ${f0(F.anio2027.p10)} – ${f0(F.anio2027.p90)} M$`],
+    ['Avance de los objetivos',D.avance_total+' %','Antes: 48 % (18-oct-2026). Meta de esta entrega: ≥ 70 %']];
+  $('kpis').innerHTML=k.map(([a,b,c])=>`<div class="card kpi"><div class="lab">${a}</div><div class="val">${b}</div><div class="det">${c}</div></div>`).join('');
+  $('avance').innerHTML=D.objetivos.map(o=>`<div class="obj"><div><div class="t">${o.n}. ${o.t}</div><div class="e">${o.e}</div></div>
+    <div class="bar" title="Antes ${o.antes} %"><i style="width:${o.ahora}%;background:linear-gradient(90deg,#3D008D,#ED1E79)"></i></div>
+    <div class="mono" style="font-weight:700;text-align:right">${o.ahora} %</div></div>`).join('');
+  const sinFV=D.reporte.cump_sFV;
+  $('claves').innerHTML=`
+   <div class="callout warn"><b>El sobrecumplimiento depende de un pago.</b> Sin los $998,6 M de Fondavivienda (junio), el cumplimiento del reporte pasa de ${pct(D.reporte.cump)} a ${pct(sinFV)} y el de los libros de ${pct(CT.cump_acum[8])} a ${pct(CT.cump_acum_sFV[8])}.</div>
+   <div class="callout"><b>Cierre 2026:</b> con el pago ya recibido, la línea cerraría en torno a ${f0(CI.total[2])} M$ frente a un presupuesto de ${f0(CI.presu_anual)} M$. Sin el pago, la probabilidad de cumplir sería solo ${pct(CI.p_cumple_sFV)}.</div>
+   <div class="callout"><b>Modelo:</b> el SARIMA en logaritmo es el mejor o empata en el desarrollo y es el único con intervalos calibrados; el método actual de la empresa es competitivo en el total sin Fondavivienda, pero no da rango.</div>
+   <div class="callout ok"><b>2027:</b> base de ${f0(F.anio2027.mediana)} M$ (+${f1((F.anio2027.mediana/D.base2026_sFV-1)*100)} % sobre el cierre 2026 sin pago). Si el pago se repite, se suman del orden de $1.000 M; ponderado por su frecuencia histórica, unos $${f0(998.6*6/11)} M.</div>`;
+}
+
+/* ---------- OBJ 1 ---------- */
+function rO1(){
+  $('controles').innerHTML=D.controles.map(c=>`<li>${c}</li>`).join('');
+  const A=D.car;
+  const rows=[];for(let y=2016;y<=2026;y++){const e=A.EMP.anual[y],i=A.IND.anual[y];rows.push([y+(y===2026?' (ene–sep)':''),f1(e),f1(i),f1(e+i),D.filas[y].EMP,D.filas[y].IND])}
+  const sE=Object.entries(A.EMP.anual).filter(([y])=>y<2026).reduce((s,[,v])=>s+v,0),sI=Object.entries(A.IND.anual).filter(([y])=>y<2026).reduce((s,[,v])=>s+v,0);
+  rows.push({_cls:'best',_cells:['<b>2016–2025</b>','<b>'+f1(sE)+'</b>','<b>'+f1(sI)+'</b>','<b>'+f1(sE+sI)+'</b>','','']});
+  table('tab-anual',['Año','Empresarial','Individual','Total','Filas EMP','Filas IND'],rows,[1,2,3,4,5]);
+}
+
+/* ---------- OBJ 2 ---------- */
+let serSel='TOT';
+function rO2(){
+  seg('seg-serie',[['TOT','Total línea'],['EMP','Empresarial'],['IND','Individual']],serSel,v=>{serSel=v;drawSerie()});
+  $('chk-sfv').onchange=drawSerie; drawSerie();
+  mk('c-peso',{type:'bar',data:{labels:MES,datasets:[{label:'Con todos',data:D.car.peso_mes.TOT,backgroundColor:C.s1,borderRadius:4,borderSkipped:'start'},{label:'Sin Fondavivienda',data:D.car.peso_mes.TOT_sFV,backgroundColor:C.s2,borderRadius:4,borderSkipped:'start'}]},
+    options:{scales:{y:{grid,ticks:{callback:v=>v+' %'}},x:{grid:noGrid}},plugins:{tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${f1(c.parsed.y)} %`}}}}});
+  $('nota-peso').textContent=`Julio pesa ${f1(D.car.peso_mes.TOT[6])} % del año con todos los contratos y ${f1(D.car.peso_mes.TOT_sFV[6])} % sin Fondavivienda: el pico de julio del total lo fabrica ese pago. En el libro individual el pico es propio (${f1(D.car.peso_mes.IND[6])} %).`;
+  table('tab-fv',['Año','Recaudo EMP','Grupo FV (año)','Mes del pago','Pago del mes','% del total del mes'],
+    D.car.fv.map(r=>[r.anio+(r.anio===2026?' *':''),f1(r.emp),f1(r.fv),r.fv>50?MES[r.mes_max-1]:'—',r.fv>50?f1(r.fv_max):'—',r.fv>50?pct(r.pct_mes):'—']),[1,2,4,5]);
+  const L={EMP:'Empresarial',IND:'Individual',TOT:'Total línea',EMP_sFV:'Empresarial sin FV',IND_sFV:'Individual sin FV',TOT_sFV:'Total sin FV'};
+  table('tab-crec',['Serie','Ene–sep 2025','Ene–sep 2026','Crecimiento','CAGR 2016–2025'],Object.keys(L).map(k=>[L[k],f1(D.car[k].js25),f1(D.car[k].js26),pct(D.car[k].crec_js),pct(D.car[k].cagr)]),[1,2,3,4]);
+  table('tab-stl',['Serie','Fuerza estacional','Fuerza de tendencia'],[['TOT','Total'],['EMP','Empresarial'],['IND','Individual'],['TOT_sFV','Total sin FV']].map(([k,l])=>[l,f3(D.stl[k].f_estac),f3(D.stl[k].f_tend)]),[1,2]);
+  const at=[];['TOT','TOT_sFV','IND'].forEach(k=>D.stl[k].atipicos.forEach(a=>at.push([{TOT:'Total',TOT_sFV:'Total sin FV',IND:'Individual'}[k],a.mes,f1(a.valor),(a.z>0?'▲ ':'▼ ')+f2(a.z)])));
+  table('tab-atip',['Serie','Mes','Valor (M$)','Desvío (RIC)'],at,[2,3]);
+}
+function drawSerie(){
+  const k=serSel,ds=[{label:{TOT:'Total',EMP:'Empresarial',IND:'Individual'}[k],data:D.series[k],borderColor:C.s1,borderWidth:2,pointRadius:0,tension:0}];
+  const lg=[`<span style="--c:${C.s1}">${ds[0].label} con todos los contratos</span>`];
+  if($('chk-sfv').checked){ds.push({label:'Sin Fondavivienda',data:D.series[k+'_sFV'],borderColor:C.s2,borderWidth:2,pointRadius:0,borderDash:[5,3]});lg.push(`<span style="--c:${C.s2}">Sin Fondavivienda</span>`)}
+  $('lg-serie').innerHTML=lg.join('');
+  mk('c-serie',{type:'line',data:{labels:D.meses,datasets:ds},options:{scales:{y:{grid,title:{display:true,text:'M$'}},x:{grid:noGrid,ticks:{maxTicksLimit:12,callback:function(v){const l=this.getLabelForValue(v);return l.endsWith('-01')?l.slice(0,4):''},autoSkip:false}}}}});
+}
+
+/* ---------- OBJ 3 ---------- */
+let cSel='TOT';
+function rO3(){
+  seg('seg-cump',[['TOT','Total línea'],['EMP','Libro empresarial'],['IND','Libro individual']],cSel,v=>{cSel=v;drawCump()});drawCump();
+  const R=D.reporte;
+  $('kpi-rep').innerHTML=[['Cumplimiento del reporte',status(R.cump),`${f0(R.real)} de ${f0(R.meta)} M$`],['Sin el pago de Fondavivienda',status(R.cump_sFV),`${f0(R.real-998.6)} M$`],
+    ['Error del método actual (WAPE)',pct(R.wape),`Sin el pago: ${pct(R.wape_sFV)}`],['Ejecutivos sobre la meta',`${R.n_sobre} de ${R.n}`,`Mediana ${pct(R.mediana_cump)} · ${R.n_bajo70} bajo 70 %`]]
+    .map(([a,b,c])=>`<div class="kpi"><div class="lab">${a}</div><div class="val" style="font-size:1.35rem">${b}</div><div class="det">${c}</div></div>`).join('');
+  table('tab-ej',['ID','Tipo','Meta ene–sep','Real ene–sep','Cumplimiento','Real sin pago','Cumpl. sin pago','Meta anual'],
+    R.ejecutivos.map(e=>[e.id+(e.fv?' ★':''),e.canal,f1(e.meta),f1(e.real),status(e.cump),f1(e.real_sFV),status(e.cump_sFV),f1(e.meta_anual)]),[2,3,5,7]);
+  const cr=r=>[r.c,r.n,f1(r.v25),f1(r.v26),(r.d>0?'+':'')+f1(r.d)];
+  const ce=D.car.contratos;
+  table('tab-neg',['Contrato','Nombre','2025','2026','Δ'],[...ce.EMP.neg.slice(0,6).map(cr),...ce.IND.neg.slice(0,2).map(r=>cr({...r,n:r.n+' (IND)'}))],[2,3,4]);
+  table('tab-pos',['Contrato','Nombre','2025','2026','Δ'],[...ce.EMP.pos.slice(0,6).map(cr),...ce.IND.pos.slice(0,2).map(r=>cr({...r,n:r.n+' (IND)'}))],[2,3,4]);
+}
+function drawCump(){
+  const c=D.cump[cSel];
+  $('kpi-cump').innerHTML=[['Presupuesto ene–sep',f0(c.presu_js)+' M$','Presupuesto anual: '+f0(c.presu_anual)+' M$'],['Recaudo ene–sep',f0(c.real_js)+' M$','Sin Fondavivienda: '+f0(c.real_js_sFV)+' M$'],
+    ['Cumplimiento acumulado',pct(c.cump_acum[8]),'Diferencia: '+f0(c.real_js-c.presu_js)+' M$'],['Sin Fondavivienda',pct(c.cump_acum_sFV[8]),'Diferencia: '+f0(c.real_js_sFV-c.presu_js)+' M$']]
+    .map(([a,b,d])=>`<div class="card kpi"><div class="lab">${a}</div><div class="val">${b}</div><div class="det">${d}</div></div>`).join('');
+  mk('c-cmes',{type:'bar',data:{labels:MES.slice(0,9),datasets:[{label:'Real',data:c.real,backgroundColor:C.s1,borderRadius:4,borderSkipped:'start'},{label:'Presupuesto',data:c.presu.slice(0,9),backgroundColor:alpha('#94A3B8',.55),borderRadius:4,borderSkipped:'start'}]},
+    options:{scales:{y:{grid},x:{grid:noGrid}},plugins:{tooltip:{callbacks:{afterBody:it=>'Cumplimiento: '+pct(c.cump_mes[it[0].dataIndex])}}}}});
+  mk('c-cacum',{type:'line',data:{labels:MES.slice(0,9),datasets:[{label:'Con todos',data:c.cump_acum,borderColor:C.s1,borderWidth:2,pointRadius:4,pointBackgroundColor:C.s1},
+    {label:'Sin Fondavivienda',data:c.cump_acum_sFV,borderColor:C.s2,borderWidth:2,pointRadius:4,pointBackgroundColor:C.s2},{label:'Meta',data:Array(9).fill(100),borderColor:C.muted,borderDash:[4,4],borderWidth:1.5,pointRadius:0}]},
+    options:{scales:{y:{grid,ticks:{callback:v=>v+' %'}},x:{grid:noGrid}},plugins:{tooltip:{callbacks:{label:x=>`${x.dataset.label}: ${f1(x.parsed.y)} %`}}}}});
+  table('tab-desv',['Mes','Presupuesto','Real','Desviación','Cumpl. mes','Contratos con mayor recaudo del mes (total línea)'],
+    c.real.map((r,i)=>[MES[i],f1(c.presu[i]),f1(r),(r-c.presu[i]>0?'+':'')+f1(r-c.presu[i]),status(c.cump_mes[i]),
+      D.car.top_mes[i].top.map(t=>`${t.c} ${t.n.slice(0,34)} · ${f1(t.v)} (${f1(t.pct)} %)`).join('<br>')]),[1,2,3]);
+}
+
+/* ---------- OBJ 4 ---------- */
+let eSer='TOT_sFV',ePer='dev',ciSel='TOT';
+const SL={TOT:'Total',TOT_sFV:'Total sin FV',EMP:'Empresarial',IND:'Individual'};
+const MCOL={'Estacional ingenuo':C.muted,'Método actual (replicado)':C.s4,'ETS(A,Ad,A) log':C.s3,'SARIMA (0,1,1)(0,1,1)12 log':C.s2};
+function rO4(){
+  table('tab-diag',['Serie','ADF p (nivel)','KPSS p (nivel)','ADF p (Δ₁₂)','KPSS p (Δ₁₂)','ADF p (ΔΔ₁₂)','λ Box-Cox','θ (MA 1)','Θ (SMA 12)','Ljung-Box p (12)','Ljung-Box p (24)'],
+    Object.keys(SL).map(k=>{const d=D.diag[k];return [SL[k],f3(d.nivel_log.adf_p),f3(d.nivel_log.kpss_p)+(d.nivel_log.kpss_p<=0.01?'≤':''),f3(d.dif_estacional.adf_p),f3(d.dif_estacional.kpss_p)+(d.dif_estacional.kpss_p>=0.1?'≥':''),f3(d.dif_reg_estac.adf_p),f3(d.boxcox_lambda),f3(d.theta),f3(d.Theta),f3(d.ljung12_p),f3(d.ljung24_p)]}),[1,2,3,4,5,6,7,8,9,10]);
+  seg('seg-eval',Object.entries(SL),eSer,v=>{eSer=v;drawEval()});seg('seg-per',[['dev','Desarrollo'],['test','Prueba final']],ePer,v=>{ePer=v;drawEval()});drawEval();
+  $('seleccion').innerHTML=`<div class="callout ok"><b>Seleccionado: SARIMA (0,1,1)(0,1,1)₁₂ en logaritmo, sobre la serie sin Fondavivienda + escenarios R7.</b></div>
+   <ul class="chk"><li>El nivel no es estacionario (ADF p ≈ 0,9; KPSS p ≤ 0,01); con la diferencia estacional y regular sí: justifica d = 1, D = 1.</li>
+   <li>λ de Box-Cox negativo y varianza que crece con el nivel: el logaritmo es pertinente.</li>
+   <li>Desarrollo: menor MASE en el total, el empresarial y el individual; en el total sin FV empata con el método actual (${f3(ev('dev','TOT_sFV','SARIMA (0,1,1)(0,1,1)12 log').MASE)} vs ${f3(ev('dev','TOT_sFV','Método actual (replicado)').MASE)}).</li>
+   <li>Es el único con intervalos calibrados en desarrollo (cobertura ${pct(100*ev('dev','TOT_sFV','SARIMA (0,1,1)(0,1,1)12 log').C80)} y ${pct(100*ev('dev','TOT_sFV','SARIMA (0,1,1)(0,1,1)12 log').C95)}); ETS queda corto.</li>
+   <li>Residuos sin autocorrelación (Ljung-Box p &gt; 0,3).</li>
+   <li>Prueba final: el error mensual de todos sube (MASE ≈ 3) por los pagos desplazados de 2025–2026, pero el SARIMA sin FV tiene el menor error del total anual (${pct(ev('test','TOT_sFV','SARIMA (0,1,1)(0,1,1)12 log').APE12)}) y sesgo casi nulo.</li></ul>
+   <div class="callout warn"><b>Lectura honesta:</b> la mejora frente a las referencias es modesta. Para presupuestar, que un modelo simple sea difícil de superar es un resultado; el aporte del SARIMA es el <b>rango</b>, no solo la cifra.</div>`;
+  const hs=Object.keys(MCOL).map(m=>({label:m,data:D.mase_h['TOT_sFV|'+m],borderColor:MCOL[m],borderWidth:2,pointRadius:3,pointBackgroundColor:MCOL[m]}));
+  mk('c-h',{type:'line',data:{labels:[...Array(12)].map((_,i)=>'h'+(i+1)),datasets:hs},options:{scales:{y:{grid,title:{display:true,text:'MASE · total sin FV'}},x:{grid:noGrid}},plugins:{tooltip:{callbacks:{label:x=>`${x.dataset.label}: ${f3(x.parsed.y)}`}}}}});
+  $('lg-h').innerHTML=Object.entries(MCOL).map(([m,c])=>`<span style="--c:${c}">${m}</span>`).join('');
+  seg('seg-cierre',[['TOT','Total línea'],['EMP','Empresarial'],['IND','Individual']],ciSel,v=>{ciSel=v;drawCierre()});drawCierre();
+}
+function ev(p,s,m){return (p==='dev'?D.eval_dev:D.eval_test).find(r=>r.serie===s&&r.modelo===m)}
+function drawEval(){
+  const rows=(ePer==='dev'?D.eval_dev:D.eval_test).filter(r=>r.serie===eSer);
+  const best=Math.min(...rows.map(r=>r.MASE));
+  table('tab-eval',['Modelo','MAE','RMSE','MASE','Cobertura 80 %','Cobertura 95 %','APE 12 meses','Sesgo 12 meses','Pronósticos'],
+    rows.map(r=>({_cls:r.MASE===best?'best':'',_cells:[r.modelo,f1(r.MAE),f1(r.RMSE),f3(r.MASE),r.C80==null?'—':pct(100*r.C80),r.C95==null?'—':pct(100*r.C95),pct(r.APE12),pct(r.sesgo12),r.n]})),[1,2,3,4,5,6,7,8]);
+}
+function drawCierre(){
+  const c=D.cierre[ciSel],key={TOT:'TOT_sFV',EMP:'EMP_sFV',IND:'IND_sFV'}[ciSel],f=D.fc[key],cu=D.cump[ciSel];
+  $('kpi-cierre').innerHTML=[['Real ene–sep',f0(c.real_js)+' M$','Incluye el pago de junio'],['Pronóstico oct–dic',f0(c.od[2])+' M$',`80 %: ${f0(c.od[1])}–${f0(c.od[3])} · presupuesto ${f0(c.presu_od)}`],
+    ['Cumplimiento esperado',pct(c.cump[2]),`80 %: ${pct(c.cump[1])}–${pct(c.cump[3])} · 95 %: ${pct(c.cump[0])}–${pct(c.cump[4])}`],['Probabilidad de cumplir',pct(c.p_cumple),'Sin el pago: '+pct(c.p_cumple_sFV)+` (cumpl. ${pct(c.cump_sFV[2])})`]]
+    .map(([a,b,d])=>`<div class="kpi"><div class="lab">${a}</div><div class="val" style="font-size:1.5rem">${b}</div><div class="det">${d}</div></div>`).join('');
+  const real=[...D.series[ciSel].slice(-9),null,null,null];
+  const nul=Array(8).fill(null),sl=(a)=>[...nul,real[8],...a.slice(0,3)];
+  mk('c-od',{type:'line',data:{labels:MES,datasets:[
+    {label:'95 % sup',data:sl(f.p97_5),borderWidth:0,pointRadius:0,fill:'+1',backgroundColor:alpha(C.s2,.12)},{label:'95 % inf',data:sl(f.p2_5),borderWidth:0,pointRadius:0,fill:false},
+    {label:'80 % sup',data:sl(f.p90),borderWidth:0,pointRadius:0,fill:'+1',backgroundColor:alpha(C.s2,.22)},{label:'80 % inf',data:sl(f.p10),borderWidth:0,pointRadius:0,fill:false},
+    {label:'Real',data:real,borderColor:C.s1,borderWidth:2,pointRadius:3,pointBackgroundColor:C.s1},{label:'Pronóstico',data:sl(f.mediana),borderColor:C.s2,borderWidth:2,borderDash:[5,3],pointRadius:3,pointBackgroundColor:C.s2},
+    {label:'Presupuesto',data:cu.presu,borderColor:C.muted,borderWidth:1.5,borderDash:[3,3],pointRadius:0}]},
+    options:{scales:{y:{grid,title:{display:true,text:'M$'}},x:{grid:noGrid}},plugins:{tooltip:{filter:i=>!/sup|inf/.test(i.dataset.label)}}}});
+}
+
+/* ---------- OBJ 5 ---------- */
+let esc='sin',monto=998.6,mesPago=7;
+function rO5(){
+  seg('seg-esc',[['sin','Sin pago extraordinario'],['con','Con pago'],['esp','Esperado (6/11)']],esc,v=>{esc=v;draw27()});
+  const r=$('r-monto');r.value=monto;r.oninput=()=>{monto=+r.value;draw27()};
+  $('s-mes').innerHTML=MES.map((m,i)=>`<option value="${i+1}" ${i+1===mesPago?'selected':''}>${m}</option>`).join('');$('s-mes').onchange=e=>{mesPago=+e.target.value;draw27()};
+  draw27();
+  const E=D.fc.EMP_sFV.anio2027.mediana,I=D.fc.IND_sFV.anio2027.mediana,T=F.anio2027.mediana;
+  $('comp27').innerHTML=`<table><tbody>
+   <tr><td>Total sin FV, modelado directo</td><td class="n">${f0(T)}</td></tr>
+   <tr><td>Empresarial sin FV (modelo propio)</td><td class="n">${f0(E)}</td></tr>
+   <tr><td>Individual sin FV (modelo propio)</td><td class="n">${f0(I)}</td></tr>
+   <tr><td>Suma de componentes</td><td class="n">${f0(E+I)}</td></tr>
+   <tr><td>Diferencia total vs. componentes</td><td class="n">${f1((E+I)/T*100-100)} %</td></tr>
+   <tr><td>ETS(A,Ad,A) log, total sin FV (contraste)</td><td class="n">${f0(D.fc.TOT_sFV_ETS.anio2027)}</td></tr>
+   <tr><td>Cierre esperado 2026 sin FV</td><td class="n">${f0(D.base2026_sFV)}</td></tr>
+   <tr><td>Presupuesto 2026 (empresa)</td><td class="n">${f0(CI.presu_anual)}</td></tr></tbody></table>
+   <p class="note">La diferencia entre el total y la suma de componentes es pequeña; la reconciliación jerárquica queda como extensión. El ETS, más conservador, queda dentro del intervalo del SARIMA.</p>
+   <div class="callout"><b>Uso sugerido:</b> contrastar la suma de las plantillas de los ejecutivos (consolidación desde el 20 de octubre) con este rango. Una cifra por fuera del intervalo del 80 % exige una justificación explícita (nuevo contrato, retiro, pago extraordinario).</div>`;
+}
+function draw27(){
+  $('v-monto').textContent=f0(monto)+' M$';
+  $('r-monto').disabled=$('s-mes').disabled=(esc==='sin');
+  const add=esc==='sin'?0:(esc==='con'?monto:monto*6/11);
+  const sh=a=>a.slice(3).map((v,i)=>v+(i+1===mesPago?add:0));
+  const md=sh(F.mediana),lo8=sh(F.p10),hi8=sh(F.p90),lo9=sh(F.p2_5),hi9=sh(F.p97_5);
+  const A=F.anio2027;
+  $('kpi-27').innerHTML=[['Recaudo 2027 (mediana)',f0(A.mediana+add)+' M$',esc==='sin'?'Escenario sin pago':`Incluye ${f0(add)} M$ en ${MES[mesPago-1]}`],
+    ['Intervalo 80 %',`${f0(A.p10+add)} – ${f0(A.p90+add)}`,'M$'],['Intervalo 95 %',`${f0(A.p2_5+add)} – ${f0(A.p97_5+add)}`,'M$'],
+    ['Frente al presupuesto 2026',pct(((A.mediana+add)/CI.presu_anual-1)*100),'Variación de la mediana 2027']]
+    .map(([a,b,d])=>`<div class="kpi"><div class="lab">${a}</div><div class="val" style="font-size:1.45rem">${b}</div><div class="det">${d}</div></div>`).join('');
+  const hist=D.series.TOT.slice(-33); // ene-2024..sep-2026
+  const labs=[...D.meses.slice(-33),...D.fut];
+  const N=hist.length,pad=Array(N+3).fill(null);
+  const conn=a=>[...Array(N+2).fill(null),F.mediana[2],...a];
+  mk('c-27',{type:'line',data:{labels:labs,datasets:[
+    {label:'95 % sup',data:[...pad,...hi9],borderWidth:0,pointRadius:0,fill:'+1',backgroundColor:alpha(C.s2,.12)},{label:'95 % inf',data:[...pad,...lo9],borderWidth:0,pointRadius:0},
+    {label:'80 % sup',data:[...pad,...hi8],borderWidth:0,pointRadius:0,fill:'+1',backgroundColor:alpha(C.s2,.22)},{label:'80 % inf',data:[...pad,...lo8],borderWidth:0,pointRadius:0},
+    {label:'Histórico',data:[...hist,...Array(15).fill(null)],borderColor:C.s1,borderWidth:2,pointRadius:0},
+    {label:'Oct–dic 2026',data:[...Array(N-1).fill(null),hist[N-1],...F.mediana.slice(0,3),...Array(12).fill(null)],borderColor:C.s2,borderWidth:1.5,borderDash:[2,3],pointRadius:0},
+    {label:'Proyección 2027',data:conn(md),borderColor:C.s2,borderWidth:2,pointRadius:2,pointBackgroundColor:C.s2}]},
+    options:{scales:{y:{grid,title:{display:true,text:'M$'}},x:{grid:noGrid,ticks:{autoSkip:true,maxTicksLimit:16}}},plugins:{tooltip:{filter:i=>!/sup|inf/.test(i.dataset.label)}}}});
+  $('ef27').textContent=f0(md[0]+md[1]);
+  const tot=[md,lo8,hi8,lo9,hi9].map(a=>a.reduce((s,v)=>s+v,0));
+  table('tab-27',['Mes 2027','Mediana','80 % inf','80 % sup','95 % inf','95 % sup','Peso del mes'],
+    [...md.map((v,i)=>[MES[i]+(i+1===mesPago&&add?' ★':''),f1(v),f1(lo8[i]),f1(hi8[i]),f1(lo9[i]),f1(hi9[i]),pct(100*v/tot[0])]),
+     {_cls:'best',_cells:['<b>Suma meses</b>','<b>'+f0(tot[0])+'</b>','','','','','']}],[1,2,3,4,5,6]);
+}
+
+/* ---------- PENDIENTES ---------- */
+function rPend(){$('pend').innerHTML=D.pendientes.map(p=>`<li class="no">${p}</li>`).join('')}
+
+const R={resumen:rResumen,o1:rO1,o2:rO2,o3:rO3,o4:rO4,o5:rO5,pend:rPend},done={};
+function render(k){if(!done[k]){R[k]();done[k]=1}}
+$('fecha').textContent=D.generado;
+let start='resumen';try{const s=localStorage.getItem('exepaz-tab');if(s&&R[s])start=s}catch(e){}
+document.querySelectorAll('nav.tabs button')[TABS.findIndex(t=>t[0]===start)].click();
+</script>
+</body>
+</html>
